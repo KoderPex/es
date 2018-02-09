@@ -14,13 +14,14 @@ class ApontamentoService {
             .then(apontamentos => 
                 apontamentos.map(o => 
                     new Apontamento(
-                        new Date(o.data),
+                        DateHelper.data(o.data),
                         o.ofer,
-                        o.qtim,
                         o.qthr,
                         o.qtal,
                         o.names,
-                        o.id                     
+                        o.id,
+                        o.fg,
+                        o.sq
                     )
                 )
             )

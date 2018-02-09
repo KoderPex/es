@@ -48,11 +48,12 @@ class ApontamentoDAO {
                     apontamentos.push(new Apontamento(
                         dado._data,
                         dado._ofer,
-                        dado._qtim,
                         dado._qthr,
                         dado._qtal,
                         dado._names,
-                        dado._id
+                        dado._id,
+                        dado._fg,
+                        dado._sq
                     ));
 
                     atual.continue();
