@@ -1,14 +1,14 @@
 class Apontamento {
 
-    constructor(data,ofer,qthr,qtal,names,id,fg,sq) {
+    constructor(data,ofer,qthr,qtal,id,fg,sq,vs) {
         this._data = new Date(data.getTime()); //Programação defensiva
         this._ofer = ofer;
         this._qthr = qthr;
         this._qtal = qtal;
-        this._names = names;
         this._id = id;
         this._fg = fg;
         this._sq = sq;
+        this._vs = vs;
         Object.freeze(this); //isFrozen()
     }
     
@@ -38,6 +38,10 @@ class Apontamento {
 
     get sq() {
         return this._sq;
+    }
+
+    get vs() {
+        return this._vs;
     }
 
     isEquals(outroApontamento) {        

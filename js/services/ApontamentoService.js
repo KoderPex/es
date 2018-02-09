@@ -10,18 +10,18 @@ class ApontamentoService {
     }
 
     obterApontamentos() {
-        return this._http.get('http://iasd-capaoredondo.com.br/escolasabatina/mock.php')
-            .then(apontamentos => 
-                apontamentos.map(o => 
+        return this._http.get('http://iasd-capaoredondo.com.br/escolasabatina/services/')
+            .then( res => 
+                res.ap.map(o => 
                     new Apontamento(
                         DateHelper.data(o.data),
                         o.ofer,
                         o.qthr,
                         o.qtal,
-                        o.names,
                         o.id,
                         o.fg,
-                        o.sq
+                        o.sq,
+                        o.qtvs
                     )
                 )
             )

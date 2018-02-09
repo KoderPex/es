@@ -31,8 +31,7 @@ class ApontamentosListView extends View {
     }
 
     palAl(q,a){
-        let p = Math.ceil((q/a)*100);
-        return q+"/"+a+" <small>("+p+"%)</small>";
+        return q+" <small>("+ Math.ceil((q/a)*100) +"%)</small>";
     }
 
     template(model) {
@@ -53,6 +52,7 @@ class ApontamentosListView extends View {
                         <div id="collapseFour_${n.id}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour_${n.id}" aria-expanded="false" style="height: 0px;">
                             <div class="panel-body">
                                 ${this.card("col-indigo","face","MEMBROS",n.al)}
+                                ${this.card("col-yellow","star","VISITANTES",n.vs)}
                                 ${this.card("col-brown","pan_tool","PRESENÇA",this.palAl(15,n.al))}
                                 ${this.card("col-black","book","ESTUDO",this.palAl(10,n.al))}
                                 ${this.card("col-red","forum","TESTEMUNHO",n.hr)}

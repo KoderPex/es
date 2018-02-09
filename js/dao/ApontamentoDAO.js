@@ -50,10 +50,10 @@ class ApontamentoDAO {
                         dado._ofer,
                         dado._qthr,
                         dado._qtal,
-                        dado._names,
                         dado._id,
                         dado._fg,
-                        dado._sq
+                        dado._sq,
+                        dado._vs
                     ));
 
                     atual.continue();
