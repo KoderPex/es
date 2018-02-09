@@ -1,5 +1,5 @@
-const stores = ['apontamentos','names','classes'];
-const version = 1;
+const stores = ['whoami','apontamentos','names','classes'];
+let version = 1;
 const dbName = 'esiasd';
 
 let connection = null;

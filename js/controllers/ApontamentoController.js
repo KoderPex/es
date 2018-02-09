@@ -33,7 +33,25 @@ class ApontamentoController {
                 //this._mensagem.texto = error;
             });
 
-        setInterval( () => this.importaApontamentos(), 10000);
+        //01 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR.
+        //  TENTAR SE CONECTAR PARA BAIXAR.
+        //  SE NAO CONSEGUIU BAIXAR, PROGRAMA TENTATIVA PARA 1:30.
+        //  VERIFICA SE TODAS AS CLASSES SUBMETERAM AS ATUALIZACOES (host).
+        //  SE HA CLASSES A SUBMETER, PROGRAMA TENTATIVA PARA 1:30.
+        //  SE TODAS AS CLASSES ATUALIZADAS (host), MARCA CLASSE ATUALIZADA, RE-CRIA BANCO (local).
+
+        //02 - SE BASE (local) EXISTE, VERIFICAR SE PRECISA ENVIAR (host) APONTAMENTOS FECHADOS.
+        //  TENTAR SE CONECTAR (host) PARA ENVIAR.
+        //  SE NAO CONSEGUIU ENVIAR, PROGRAMA TENTATIVA PARA OS PROXIMOS 5:00.
+        //  SE CONSEGUIR ENVIAR, APAGA A BASE (local) DE CLASSES/PESSOAS/APONTAMENTOS, E VOLTA PARA O PASSO 1.
+
+        //FLAGS
+        //0 - EM ABERTO
+        //1 - PRONTO PARA ENVIO
+        //2 - ATUALIZADO
+
+        //setInterval( () => this.importaApontamentos(), 10000);
+        setTimeout( () => this.importaApontamentos(), 10000);
     }
 
     ordena(coluna) {
@@ -58,7 +76,9 @@ class ApontamentoController {
                 this._listaApontamentos.adiciona(apontamento);
                 this._limpaFormulario();  
         })
-        .catch(erro => this._mensagem.texto = erro);
+        .catch(
+            //erro => this._mensagem.texto = erro
+        );
     }
 
     importaApontamentos() {
