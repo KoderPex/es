@@ -18,7 +18,7 @@ class ApontamentoController {
             'adiciona', 'ordena', 'inverteOrdem'
         );
 
-        this._service = new ApontamentoService();
+        this._service = new BaseService();
 
         this._init();
     }

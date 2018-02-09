@@ -1,10 +1,10 @@
 //import {Negociacao} from '../models/Negociacao';
 
-class ApontamentoDAO {
+class NomeDAO {
 
     constructor (connection) {
         this._connection = connection;
-        this._store = 'apontamentos';
+        this._store = 'nomes';
         Object.freeze(this);
     }
 
@@ -21,9 +21,9 @@ class ApontamentoDAO {
 
     }
 
-    adiciona(apontamento){
+    adiciona(nome){
         return new Promise((resolve,reject) => {
-            let request = this.store.add(apontamento);
+            let request = this.store.add(nome);
 
             request.onsuccess = e => {
                 resolve();
@@ -31,7 +31,7 @@ class ApontamentoDAO {
     
             request.onerror = e => {
                 console.log(e.target.error);
-                reject('Não foi possível adicionar o apontamento.');
+                reject('Não foi possível adicionar o nome.');
             };
         });
     }
@@ -40,25 +40,21 @@ class ApontamentoDAO {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
                 
-            let apontamentos = [];
+            let nomes = [];
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
                     let dado = atual.value;
-                    apontamentos.push(new Apontamento(
-                        dado._data,
-                        dado._ofer,
-                        dado._qthr,
-                        dado._qtal,
-                        dado._qtvs,
+                    nomes.push(new Nome(
                         dado._id,
-                        dado._fg,
-                        dado._sq
+                        dado._ic,
+                        dado._nm,
+                        dado._dt
                     ));
 
                     atual.continue();
                 } else { 
-                    resolve(apontamentos);
+                    resolve(nomes);
                 }
             };
         });
