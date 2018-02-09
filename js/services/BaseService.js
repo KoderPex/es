@@ -10,7 +10,7 @@ class BaseService {
     }
 
     obterBase() {
-        return this._http.get('http://iasd-capaoredondo.com.br/escolasabatina/mock.php')
+        return this._http.get('http://iasd-capaoredondo.com.br/escolasabatina/services/')
             .catch(error => {
                 console.log(error);
                 throw new Error('Não foi possível obter a base');
