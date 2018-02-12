@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Apontamentos</title>
+    <title>Escola Sabatina - IASD Capão Redondo - SP</title>
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
     <link rel="stylesheet" href="css/material-icons.css" />
@@ -18,45 +18,65 @@
     <script src="js/helpers/DateHelper.js"></script>
     <script src="js/models/Apontamento.js"></script>
     <script src="js/models/Nome.js"></script>
+    <script src="js/models/WhoAmI.js"></script>
     <script src="js/models/ListaApontamentos.js"></script>
+    <script src="js/dao/DAO.js"></script>
     <script src="js/dao/ApontamentoDAO.js"></script>
     <script src="js/dao/NomeDAO.js"></script>
+    <script src="js/dao/WhoAmIDAO.js"></script>
     <script src="js/services/ProxyFactory.js"></script>
     <script src="js/services/HttpService.js"></script>
     <script src="js/services/ConnectionFactory.js"></script>
     <script src="js/services/BaseService.js"></script>
+    <script src="js/services/WhoAmIService.js"></script>
     <script src="js/services/ApontamentoService.js"></script>
     <script src="js/views/View.js"></script>
-    <script src="js/views/ApontamentosButtonView.js"></script>
+    <script src="js/views/ButtonView.js"></script>
     <script src="js/views/ApontamentosListView.js"></script>
     <script src="js/controllers/ApontamentoController.js"></script>
+    <script src="js/controllers/MaestroController.js"></script>
 
     <script src="js/index.js?"></script>
 </head>
 <body class="container">
     <h1 class="text-center"></h1>
     <div class="card">
+        <div class="header bg-blue-grey" id="divHeaderClasse">
+            <h4>Classe: BA02 - ELIAS</h4>
+            <div>Publico: ADULTOS - Período: PRIMEIRO</div>
+        </div>
         <div class="header">
-            <h4>Apontamentos</h4>
-            <div class="row clearfix" id="apontamentosButtonsView" style="display:none"></div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#liTabClasse" data-toggle="tab">
+                        <i class="material-icons">group</i> CLASSE
+                    </a>
+                </li>
+                <li role="presentation" id="liTabMembros">
+                    <a href="#liTabMembros" data-toggle="tab">
+                        <i class="material-icons">transfer_within_a_station</i> MEMBROS
+                    </a>
+                </li>
+                <li role="presentation" id="liTabApontamentos">
+                    <a href="#liTabApontamentos" data-toggle="tab">
+                        <i class="material-icons">event_note</i> APONTAMENTOS
+                    </a>
+                </li>
+            </ul>
+            <div class="row clearfix" id="buttonsView"></div>
         </div>
         <div class="body" id="divBody">
-            <form class="form">
-                <div class="row clearfix" id="divInputDate" style="display:none">
-                    <div class="col-md-3">
-                        <b>Data</b>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="material-icons">date_range</i>
-                            </span>
-                            <div class="form-line">
-                                <input type="text" class="form-control date" placeholder="dd/mm/aaaa">
-                            </div>
-                        </div>
-                    </div>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="liTabClasse">
+                    <div class="row clearfix" id="inputClasseView"></div>
                 </div>
-                <div class="row clearfix" id="apontamentosListView"></div>
-            </form>
+                <div role="tabpanel" class="tab-pane fade" id="liTabMembros">
+                    <div class="row clearfix" id="inputMembros"></div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="liTabApontamentos">
+                    <div class="row clearfix" id="apontamentosView"></div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

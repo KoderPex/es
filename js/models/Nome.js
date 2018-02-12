@@ -7,7 +7,7 @@ class Nome {
         this._dt = new Date(dt.getTime()); //Programação defensiva
         Object.freeze(this); //isFrozen()
     }
-    
+
     get dt() {
         return new Date(this._dt.getTime()); //Programação defensiva
     }
@@ -24,7 +24,7 @@ class Nome {
         return this._nm;
     }
 
-    isEquals(outroApontamento) {        
-        return this._id == outroApontamento.id;
+    isEquals(outro) {
+        return this._id == outro.id;
     }
 }

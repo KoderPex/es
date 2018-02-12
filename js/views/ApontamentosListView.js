@@ -4,7 +4,7 @@
 
 class ApontamentosListView extends View {
 
-    constructor(elemento){ 
+    constructor(elemento){
         super(elemento);
 
         elemento.on('click', function(event){
@@ -26,7 +26,7 @@ class ApontamentosListView extends View {
                     <div class="number">${val}</div>
                 </div>
             </div>
-        </div>       
+        </div>
         `;
     }
 
@@ -59,14 +59,27 @@ class ApontamentosListView extends View {
                                 ${this.card("col-green","attach_money","OFERTA",n.vl)}
                             </div>
                         </div>
-                    </div>                     
+                    </div>
                     `
                 }
                 ).join('')}
             </div>
             `
-            : 
-            ``;
+            :
+            `<div class="row clearfix" id="divInputDate">
+                <div class="col-md-3">
+                    <b>Data</b>
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <i class="material-icons">date_range</i>
+                        </span>
+                        <div class="form-line">
+                            <input type="text" class="form-control date" placeholder="dd/mm/aaaa">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
     }
 
 }

@@ -1,9 +1,9 @@
 //import {View} from './View';
 //import {currentInstance} from '../controllers/ApontamentoController';
 
-class ApontamentosButtonView extends View {
+class ButtonView extends View {
 
-    constructor(elemento){ 
+    constructor(elemento){
         super(elemento);
 
         elemento.on('click', function(event){
@@ -25,4 +25,3 @@ class ApontamentosButtonView extends View {
 
 
 }
-

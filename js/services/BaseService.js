@@ -10,7 +10,7 @@ class BaseService {
     }
 
     obterBase() {
-        return this._http.get('http://iasd-capaoredondo.com.br/escolasabatina/services/')
+        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/')
             .catch(error => {
                 console.log(error);
                 throw new Error('Não foi possível obter a base');
@@ -18,7 +18,7 @@ class BaseService {
     }
 
     parseApontamentos(base){
-        return base.then( base => base.ap.map( o => 
+        return base.then( base => base.ap.map( o =>
                 new Apontamento(
                     DateHelper.data(o.data),
                     o.ofer,
@@ -35,8 +35,20 @@ class BaseService {
     }
 
     parseNomes(base){
-        return base.then( base => base.ap.map( o => 
+        return base.then( base => base.nm.map( o =>
                 new Nome(
+                    o.id,
+                    o.ic,
+                    o.nm,
+                    DateHelper.data(o.dt)
+                )
+            )
+        )
+    }
+
+    parseClasses(base){
+        return base.then( base => base.cl.map( o =>
+                new Classe(
                     o.id,
                     o.ic,
                     o.nm,
@@ -50,36 +62,23 @@ class BaseService {
         return ConnectionFactory.getConnection();
     }
 
-    cadastra(nase) {
+    cadastra(base) {
         return this.daoFactory
             .then(connection => new ApontamentoDAO(connection))
-                .then(dao => dao.adiciona(base))
-            .then(connection => new NomeDAO(connection))
-                .then(dao => dao.adiciona(apontamento))
+                .then(dao => dao.adiciona(base.ap))
             .catch(erro => {
                console.log(erro);
                throw new Error("Não foi possível adicionar")
            });
    }
 
-   importa(listaAtual) {
-        return this.obterBase()
-            .then( base => parseApontamentos(base) )
-                .then(apontamentos =>
-                    apontamentos.filter(apontamento =>
-                        !listaAtual.some(apontamentoExistente =>
-                            apontamento.isEquals(apontamentoExistente)))
-                )
-            .then( base => parseNomes(base) )
-                .then(nomes =>
-                    nomes.filter(nome =>
-                        !listaAtual.some(nomeExistente =>
-                            nome.isEquals(nomeExistente)))
-                )
-            .catch( erro => {
-                console.log(erro);
-                throw new Error("Não foi possível buscar a base para importar");
-            });  
+   obterClasses() {
+       return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/whoami/')
+           .catch(error => {
+               console.log(error);
+               throw new Error('Não foi possível obter a base');
+           });
+
    }
 
 }
