@@ -10,23 +10,14 @@ class WhoAmIDAO extends DAO {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
-            let classe = [];
+            let whoami = null;
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    let dado = atual.value;
-                    nomes.push(new WhoAMI(
-                        dado._id,
-                        dado._cd,
-                        dado._ds,
-                        dado._pub,
-                        dado._per,
-                        dado._seq
-                    ));
-
+                    whoami = new WhoAmI(atual.value._id);
                     atual.continue();
                 } else {
-                    resolve(classe);
+                    resolve(whoami);
                 }
             };
         });

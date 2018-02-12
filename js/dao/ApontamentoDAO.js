@@ -1,11 +1,9 @@
 //import {Negociacao} from '../models/Negociacao';
 
-class ApontamentoDAO {
+class ApontamentoDAO extends DAO {
 
     constructor (connection) {
-        this._connection = connection;
-        this._store = 'apontamentos';
-        Object.freeze(this);
+        super(connection, 'apontamentos');
     }
 
     get store() {
@@ -28,7 +26,7 @@ class ApontamentoDAO {
             request.onsuccess = e => {
                 resolve();
             };
-    
+
             request.onerror = e => {
                 console.log(e.target.error);
                 reject('Não foi possível adicionar o apontamento.');
@@ -39,7 +37,7 @@ class ApontamentoDAO {
     listaTodos() {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
-                
+
             let apontamentos = [];
             cursor.onsuccess = e => {
                 let atual = e.target.result;
@@ -57,7 +55,7 @@ class ApontamentoDAO {
                     ));
 
                     atual.continue();
-                } else { 
+                } else {
                     resolve(apontamentos);
                 }
             };

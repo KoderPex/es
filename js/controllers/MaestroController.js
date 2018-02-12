@@ -9,18 +9,33 @@
 class MaestroController {
 
     constructor() {
-        //this._service = new BaseService();
+        this._populateClasses = new Bind(
+            new ListaClasses(),
+            new InputClassView($('#inputClasseView')),
+            'adiciona'
+        );
         this._init();
     }
 
     _init() {
         new WhoAmIService().verifica()
-            .then( dao => {
-                if (dao.length == 0) {
-                    this.iniciaInformacoesdaClasse();
-                    this.atualizaClasses();
+            .then( whoami => {
+                if (whoami == null) {
+                    Promise.all([
+                        this.iniciaInformacoesdaClasse(),
+                        this.importaClasses()
+                    ])
+                    .then( () => {
+                        this.escolhe();
+                    })
+                    .catch(erro => {
+                        throw new Error(erro);
+                    });
                 }
-            });
+            })
+            .catch( error => console.log(error) );
+
+
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
         //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
@@ -51,16 +66,29 @@ class MaestroController {
         $("#divHeaderClasse, #liTabMembros, #liTabApontamentos, #buttonsView").hide();
     }
 
-    atualizaClasses(){
-        this.importaClasses();
+    importaClasses(){
+        new BaseService().importarClasses();
     }
 
-    importaClasses(){
-        new BaseService().obterClasses()
-            .then( dao => {
-                ConnectionFactory.renewStore(dao,'classes')
-                console.log( 'Base Importada com Sucesso' )
-        })
+    escolhe(){
+        new ClasseService()
+            .lista()
+            .then(classes => {
+                classes.forEach(classe =>
+                    this._populateClasses.adiciona(classe)
+                )
+                $("#btnGravarWhoAmI").enable( false );
+                $("#cmbWhoAmI").on('change', function(event){
+                    $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
+                });
+                $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
+                    console.log('gravar id escolhido em whoami');
+                    console.log(event.target);
+                });
+            })
+            .catch(error => {
+                //this._mensagem.texto = error;
+            });
     }
 
 }
