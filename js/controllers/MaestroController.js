@@ -18,11 +18,11 @@ class MaestroController {
     }
 
     _init() {
+        this.iniciaInformacoesdaClasse();
         new WhoAmIService().verifica()
             .then( whoami => {
                 if (whoami == null) {
                     Promise.all([
-                        this.iniciaInformacoesdaClasse(),
                         this.importaClasses()
                     ])
                     .then( () => {
