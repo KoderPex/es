@@ -24,6 +24,7 @@ class ApontamentoController {
     }
 
     _init() {
+        /*
         new ApontamentoService()
             .lista()
             .then(apontamentos =>
@@ -32,15 +33,20 @@ class ApontamentoController {
             .catch(error => {
                 //this._mensagem.texto = error;
             });
+        */
 
-        //01 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR.
+        //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
+        //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
+        //  AO CLICAR NO BOTAO REDEFINIR CLASSE, APAGAR AS INFORMACOES DE whoami.
+
+        //02 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR AS INFORMACOES DE ACORDOM COM whoami.
         //  TENTAR SE CONECTAR PARA BAIXAR.
         //  SE NAO CONSEGUIU BAIXAR, PROGRAMA TENTATIVA PARA 1:30.
         //  VERIFICA SE TODAS AS CLASSES SUBMETERAM AS ATUALIZACOES (host).
         //  SE HA CLASSES A SUBMETER, PROGRAMA TENTATIVA PARA 1:30.
         //  SE TODAS AS CLASSES ATUALIZADAS (host), MARCA CLASSE ATUALIZADA, RE-CRIA BANCO (local).
 
-        //02 - SE BASE (local) EXISTE, VERIFICAR SE PRECISA ENVIAR (host) APONTAMENTOS FECHADOS.
+        //03 - SE BASE (local) EXISTE, VERIFICAR SE PRECISA ENVIAR (host) APONTAMENTOS FECHADOS.
         //  TENTAR SE CONECTAR (host) PARA ENVIAR.
         //  SE NAO CONSEGUIU ENVIAR, PROGRAMA TENTATIVA PARA OS PROXIMOS 5:00.
         //  SE CONSEGUIR ENVIAR, APAGA A BASE (local) DE CLASSES/PESSOAS/APONTAMENTOS, E VOLTA PARA O PASSO 1.
@@ -51,7 +57,7 @@ class ApontamentoController {
         //2 - ATUALIZADO
 
         //setInterval( () => this.importaApontamentos(), 10000);
-        setTimeout( () => this.importaApontamentos(), 10000);
+        //setTimeout( () => this.importaApontamentos(), 10000);
     }
 
     ordena(coluna) {
@@ -74,7 +80,7 @@ class ApontamentoController {
             .cadastra(apontamento)
             .then( () => {
                 this._listaApontamentos.adiciona(apontamento);
-                this._limpaFormulario();  
+                this._limpaFormulario();
         })
         .catch(
             //erro => this._mensagem.texto = erro
@@ -91,7 +97,7 @@ class ApontamentoController {
                 }
             });
     }
-    
+
     _criaApontamento() {
         return new apontamento(
             DateHelper.textoParaData(this._inputData.val())

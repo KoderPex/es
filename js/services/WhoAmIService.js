@@ -3,7 +3,7 @@
 //import {Apontamento} from '../models/Apontamento';
 //import {ApontamentoDAO} from '../dao/ApontamentoDAO';
 
-class ApontamentoService {
+class WhoAmIService {
 
     constructor(){
         this._http = new HttpService();
@@ -12,24 +12,24 @@ class ApontamentoService {
     get daoFactory() {
         return ConnectionFactory
             .getConnection()
-            .then(connection => new ApontamentoDAO(connection));
+            .then(connection => new WhoAmIDAO(connection));
     }
 
-    cadastra(apontamento) {
+    cadastra(classe) {
         return this.daoFactory
-            .then(dao => dao.adiciona(apontamento))
+            .then(dao => dao.adiciona(classe))
             .catch(erro => {
                console.log(erro);
-               throw new Error("Não foi possível adicionar base")
+               throw new Error("Não foi possível adicionar classe")
            });
    }
 
-   lista() {
+   verifica() {
         return this.daoFactory
-            .then(dao => dao.listaTodos())
+            .then(dao => dao.recupera())
             .catch(erro => {
                 console.log(erro);
-                throw new Error("Não foi possível obter as apontamentos");
+                throw new Error("Não foi possível obter a classe");
             });
    }
 

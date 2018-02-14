@@ -1,10 +1,11 @@
 class Apontamento {
 
-    constructor(data,ofer,qthr,qtal,id,fg,sq,vs) {
+    constructor(data,ofer,qthr,qtal,qtvs,id,fg,sq) {
         this._data = new Date(data.getTime()); //Programação defensiva
         this._ofer = ofer;
         this._qthr = qthr;
         this._qtal = qtal;
+        this._qtvs = qtvs;
         this._id = id;
         this._fg = fg;
         this._sq = sq;
@@ -30,6 +31,10 @@ class Apontamento {
 
     get al() {
         return this._qtal;
+    }
+
+    get vs() {
+        return this._qtvs;
     }
 
     get hr() {

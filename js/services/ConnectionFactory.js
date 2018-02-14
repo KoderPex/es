@@ -1,6 +1,6 @@
-const stores = ['whoami','apontamentos','names','classes'];
+const stores = ['whoami','apontamentos','nomes','classes'];
 let version = 1;
-const dbName = 'esiasd';
+const dbName = 'esiasdcr';
 
 let connection = null;
 let close = null;
@@ -19,7 +19,7 @@ class ConnectionFactory {
                 ConnectionFactory._createStores(e.target.result);
             };
 
-            openRequest.onsuccess = e => {    
+            openRequest.onsuccess = e => {
                 if (!connection) {
                     connection = e.target.result;
                     close = connection.close.bind(connection);
@@ -30,12 +30,12 @@ class ConnectionFactory {
                 resolve(connection);
             };
 
-            openRequest.onerror = e => {    
+            openRequest.onerror = e => {
                 console.log(e.target.error);
                 reject(e.target.error.name);
             };
         });
-        
+
     }
 
     static closeConnection() {
@@ -47,11 +47,14 @@ class ConnectionFactory {
 
     static _createStores(connection){
         stores.forEach(store => {
-            if (connection.objectStoreNames.contains(store)){
-                connection.deleteObjectStore(store);
-            }
-            connection.createObjectStore(store, {autoIncrement: true} );
+            ConnectionFactory.renewStore(connection,store);
         });
+    }
 
+    static renewStore(connection,store){
+        if (connection.objectStoreNames.contains(store)){
+            connection.deleteObjectStore(store);
+        }
+        connection.createObjectStore(store, {autoIncrement: true} );
     }
 }
