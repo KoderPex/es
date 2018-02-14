@@ -18,10 +18,18 @@ class ClasseService {
     lista() {
         return this.daoFactory
             .then(dao => dao.recupera())
-            .catch(erro => {
-                console.log(erro);
+            .catch(error => {
+                console.log(error);
                 throw new Error("Não foi possível obter as classees");
             });
     }
 
+    getClassByID(pId){
+        return this.daoFactory
+            .then(dao => dao.recuperaByID(pId))
+            .catch(error => {
+                console.log(error);
+                throw new Error("Não foi possível obter a classe");
+            });
+    }
 }

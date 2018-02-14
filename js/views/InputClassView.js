@@ -27,7 +27,7 @@ class InputClassView extends View {
                         </select>
                     </div>
                 </div>
-                <button type="button" id="btnGravarWhoAmI" class="btn bg-orange waves-effect">
+                <button type="button" id="btnGravarWhoAmI" class="btn bg-orange waves-effect" disabled="disabled">
                     <i class="material-icons">save</i>
                     <span>CONFIRMAR CLASSE</span>
                 </button>

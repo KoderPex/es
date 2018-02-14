@@ -83,7 +83,7 @@ class ApontamentoController {
                 this._limpaFormulario();
         })
         .catch(
-            //erro => this._mensagem.texto = erro
+            //error => this._mensagem.texto = error
         );
     }
 
@@ -116,7 +116,7 @@ class ApontamentoController {
                 //this._mensagem.texto = mensagem;
                 this._listaApontamentos.esvazia();
             })
-            //.catch(erro => this._mensagem.texto = erro);
+            //.catch(error => this._mensagem.texto = error);
     }
 
 }
