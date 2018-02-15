@@ -21,7 +21,7 @@ class InputClassView extends View {
                             <option></option>
                             ${model.classes.map(n => {
                                 return `
-                                <option data-subtext="(CLASSE ${("00"+n.seq).slice(-2)} | ${n.pub} | ${n.per} PERÍODO | ${n.cd})" value="${n.id}">${n.ds}</option>
+                                <option data-subtext="(${n.pb} | ${n.pr} PERÍODO | ${n.cd})" value="${n.id}">CLASSE ${("00"+n.sq).slice(-2)} - ${n.ds}</option>
                                 `
                             }
                             ).join('')}

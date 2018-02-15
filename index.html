@@ -21,10 +21,7 @@
 
     <script src="js/models/Apontamento.js"></script>
     <script src="js/models/Nome.js"></script>
-    <script src="js/models/WhoAmI.js"></script>
     <script src="js/models/Classe.js"></script>
-    <script src="js/models/ListaApontamentos.js"></script>
-    <script src="js/models/ListaClasses.js"></script>
 
     <script src="js/dao/DAO.js"></script>
     <script src="js/dao/ApontamentoDAO.js"></script>
@@ -56,24 +53,28 @@
     <div class="card">
         <div class="header bg-blue-grey" id="divHeaderClasse"></div>
         <div class="body" id="divBody">
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" id="liTabApontamentos" class="active">
-                    <a href="#liTabApontamentos" data-toggle="tab">
-                        <i class="material-icons">event_note</i> APONTAMENTOS
-                    </a>
-                </li>
-                <li role="presentation" id="liTabMembros">
-                    <a href="#liTabMembros" data-toggle="tab">
-                        <i class="material-icons">transfer_within_a_station</i> MEMBROS
-                    </a>
-                </li>
-            </ul>
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="liTabApontamentos">
-                    <div class="row clearfix" id="apontamentosView"></div>
-                </div>
-                <div role="tabpanel" class="tab-pane fade" id="liTabMembros">
-                    <div class="row clearfix" id="inputMembros"></div>
+            <div class="row clearfix" id="divTabs">
+                <div class="col-xs-12 ol-sm-12 col-md-12 col-lg-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#liTabApontamentos" data-toggle="tab">
+                                <i class="material-icons">event_note</i> APONTAMENTOS
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#liTabMembros" data-toggle="tab">
+                                <i class="material-icons">transfer_within_a_station</i> MEMBROS
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="liTabApontamentos">
+                            <div id="apontamentosView"></div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane fade" id="liTabMembros">
+                            <div id="inputMembrosView"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row clearfix" id="inputClasseView"></div>
