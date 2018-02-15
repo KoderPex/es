@@ -25,12 +25,21 @@ class WhoAmIService {
    }
 
    verifica() {
-        return this.daoFactory
-            .then(dao => dao.recupera())
-            .catch(erro => {
-                console.log(erro);
+        return new Promise((resolve,reject) => {
+            this.daoFactory
+                .then(dao => dao.recupera())
+                .then( whoami => {
+                    if (whoami == null) {
+                        reject(whoami);
+                    } else {
+                        resolve(whoami);
+                    }
+                })
+            .catch(error => {
+                console.log(error);
                 throw new Error("Não foi possível obter a classe");
-            });
+            })
+        });
    }
 
 }

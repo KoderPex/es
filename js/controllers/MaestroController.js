@@ -12,30 +12,14 @@ class MaestroController {
         this._populateClasses = new Bind(
             new ListaClasses(),
             new InputClassView($('#inputClasseView')),
-            'adiciona'
+            'adiciona','esvazia'
         );
         this._init();
     }
 
     _init() {
         this.iniciaInformacoesdaClasse();
-        new WhoAmIService().verifica()
-            .then( whoami => {
-                if (whoami == null) {
-                    Promise.all([
-                        this.importaClasses()
-                    ])
-                    .then( () => {
-                        this.escolhe();
-                    })
-                    .catch(erro => {
-                        throw new Error(erro);
-                    });
-                }
-            })
-            .catch( error => console.log(error) );
-
-
+        this.recuperaClasse();
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
         //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
@@ -59,36 +43,81 @@ class MaestroController {
         //2 - ATUALIZADO
 
         //setInterval( () => this.importaApontamentos(), 10000);
-        //SsetTimeout( () => this.importaApontamentos(), 10000);
+        //setTimeout( () => this.recuperaClasse(), 5000);
+    }
+
+    recuperaClasse(){
+        new WhoAmIService().verifica()
+            .then( whoami => {
+                this.mostraClasse(whoami);
+                
+                apontamentoController = new ApontamentoController();
+            })
+            .catch(error => {
+                Promise.all([
+                    new BaseService().importarClasses()
+                    //new BaseService().importarAlunos()
+                ])
+                .then( () => {
+                    this.escolhe();
+                })
+                .catch(error => {
+                    throw new Error(error);
+                });
+            });
     }
 
     iniciaInformacoesdaClasse(){
-        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos, #buttonsView").hide();
+        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").hide();
     }
 
-    importaClasses(){
-        new BaseService().importarClasses();
+    populaInformacoesdaClasse(){
+        $("#liTabClasse").hide();
+        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").show();
+    }
+
+    populateClasses(classes){
+        classes.forEach(classe => {
+            this._populateClasses.adiciona(classe);
+        })
     }
 
     escolhe(){
+        let instance = this;
         new ClasseService()
             .lista()
             .then(classes => {
-                classes.forEach(classe =>
-                    this._populateClasses.adiciona(classe)
-                )
-                $("#btnGravarWhoAmI").enable( false );
-                $("#cmbWhoAmI").on('change', function(event){
-                    $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
-                });
-                $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
-                    console.log('gravar id escolhido em whoami');
-                    console.log(event.target);
-                });
+                Promise.all([
+                    instance.populateClasses(classes)
+                ])
+                .then( () => {
+                    $("#cmbWhoAmI").on('change', function(event){
+                        $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
+                    });
+                    $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
+                        new WhoAmIService()
+                            .cadastra( new WhoAmI( $("#cmbWhoAmI").selectpicker('val') ) )
+                            .then( () => instance.recuperaClasse() );
+                    });
+                })
             })
             .catch(error => {
                 //this._mensagem.texto = error;
             });
+    }
+
+    mostraClasse(whoAmI){
+        this._populateClasses.esvazia();
+
+        window.classeID = whoAmI.id;
+
+        this._populateClasses = new Bind(
+            new ListaClasses().adiciona(whoAmI),
+            new HeaderClassView( $('#divHeaderClasse')),
+            'adiciona'
+        );
+
+        this.populaInformacoesdaClasse();
     }
 
 }

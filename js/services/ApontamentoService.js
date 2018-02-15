@@ -18,8 +18,8 @@ class ApontamentoService {
     cadastra(apontamento) {
         return this.daoFactory
             .then(dao => dao.adiciona(apontamento))
-            .catch(erro => {
-               console.log(erro);
+            .catch(error => {
+               console.log(error);
                throw new Error("Não foi possível adicionar base")
            });
    }
@@ -27,8 +27,8 @@ class ApontamentoService {
    lista() {
         return this.daoFactory
             .then(dao => dao.listaTodos())
-            .catch(erro => {
-                console.log(erro);
+            .catch(error => {
+                console.log(error);
                 throw new Error("Não foi possível obter as apontamentos");
             });
    }

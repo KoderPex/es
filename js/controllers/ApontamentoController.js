@@ -9,13 +9,12 @@
 class ApontamentoController {
 
     constructor() {
-        this._ordemAtual = '';
         this._inputData = $('#data');
 
         this._listaApontamentos = new Bind(
             new ListaApontamentos(),
             new ApontamentosListView($('#apontamentosListView')),
-            'adiciona', 'ordena', 'inverteOrdem'
+            'adiciona'
         );
 
         this._service = new ApontamentoService();
@@ -24,16 +23,15 @@ class ApontamentoController {
     }
 
     _init() {
-        /*
         new ApontamentoService()
             .lista()
             .then(apontamentos =>
                 apontamentos.forEach(apontamento =>
                     this._listaApontamentos.adiciona(apontamento)))
             .catch(error => {
+                console.log(error);
                 //this._mensagem.texto = error;
             });
-        */
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
         //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
@@ -56,17 +54,7 @@ class ApontamentoController {
         //1 - PRONTO PARA ENVIO
         //2 - ATUALIZADO
 
-        //setInterval( () => this.importaApontamentos(), 10000);
-        //setTimeout( () => this.importaApontamentos(), 10000);
-    }
-
-    ordena(coluna) {
-        if (this._ordemAtual == coluna) {
-            this._listaApontamentos.inverteOrdem();
-        } else {
-            this._listaApontamentos.ordena((a, b) => a[coluna] - b[coluna]);
-        }
-        this._ordemAtual = coluna;
+        setTimeout( () => this.importaApontamentos(), 3000);
     }
 
     adiciona(event) {
@@ -83,19 +71,12 @@ class ApontamentoController {
                 this._limpaFormulario();
         })
         .catch(
-            //erro => this._mensagem.texto = erro
+            //error => this._mensagem.texto = error
         );
     }
 
     importaApontamentos() {
-        this._service
-            .importa(this._listaApontamentos.apontamentos)
-            .then(apontamentos => {
-                apontamentos.forEach(apontamento => this.insertApontamento(apontamento));
-                if (apontamentos.length > 0){
-                    //this._mensagem.texto = 'Negociações do período importadas com sucesso';
-                }
-            });
+        new BaseService().importarApontamentos(this._listaApontamentos.apontamentos);
     }
 
     _criaApontamento() {
@@ -116,7 +97,7 @@ class ApontamentoController {
                 //this._mensagem.texto = mensagem;
                 this._listaApontamentos.esvazia();
             })
-            //.catch(erro => this._mensagem.texto = erro);
+            //.catch(error => this._mensagem.texto = error);
     }
 
 }

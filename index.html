@@ -42,6 +42,7 @@
 
     <script src="js/views/View.js"></script>
     <script src="js/views/InputClassView.js"></script>
+    <script src="js/views/HeaderClassView.js"></script>
     <script src="js/views/ButtonView.js"></script>
     <script src="js/views/ApontamentosListView.js"></script>
 
@@ -53,15 +54,12 @@
 <body class="container">
     <h1 class="text-center"></h1>
     <div class="card">
-        <div class="header bg-blue-grey" id="divHeaderClasse">
-            <h4>Classe: BA02 - ELIAS</h4>
-            <div>Publico: ADULTOS - Período: PRIMEIRO</div>
-        </div>
-        <div class="header">
+        <div class="header bg-blue-grey" id="divHeaderClasse"></div>
+        <div class="body" id="divBody">
             <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
-                    <a href="#liTabClasse" data-toggle="tab">
-                        <i class="material-icons">group</i> CLASSE
+                <li role="presentation" id="liTabApontamentos" class="active">
+                    <a href="#liTabApontamentos" data-toggle="tab">
+                        <i class="material-icons">event_note</i> APONTAMENTOS
                     </a>
                 </li>
                 <li role="presentation" id="liTabMembros">
@@ -69,26 +67,16 @@
                         <i class="material-icons">transfer_within_a_station</i> MEMBROS
                     </a>
                 </li>
-                <li role="presentation" id="liTabApontamentos">
-                    <a href="#liTabApontamentos" data-toggle="tab">
-                        <i class="material-icons">event_note</i> APONTAMENTOS
-                    </a>
-                </li>
             </ul>
-            <div class="row clearfix" id="buttonsView"></div>
-        </div>
-        <div class="body" id="divBody">
             <div class="tab-content">
-                <div role="tabpanel" class="tab-pane fade in active" id="liTabClasse">
-                    <div class="row clearfix" id="inputClasseView"></div>
+                <div role="tabpanel" class="tab-pane fade in active" id="liTabApontamentos">
+                    <div class="row clearfix" id="apontamentosView"></div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="liTabMembros">
                     <div class="row clearfix" id="inputMembros"></div>
                 </div>
-                <div role="tabpanel" class="tab-pane fade" id="liTabApontamentos">
-                    <div class="row clearfix" id="apontamentosView"></div>
-                </div>
             </div>
+            <div class="row clearfix" id="inputClasseView"></div>
         </div>
     </div>
 </body>

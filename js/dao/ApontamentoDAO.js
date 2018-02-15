@@ -19,21 +19,6 @@ class ApontamentoDAO extends DAO {
 
     }
 
-    adiciona(apontamento){
-        return new Promise((resolve,reject) => {
-            let request = this.store.add(apontamento);
-
-            request.onsuccess = e => {
-                resolve();
-            };
-
-            request.onerror = e => {
-                console.log(e.target.error);
-                reject('Não foi possível adicionar o apontamento.');
-            };
-        });
-    }
-
     listaTodos() {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
@@ -44,15 +29,15 @@ class ApontamentoDAO extends DAO {
                 if (atual) {
                     let dado = atual.value;
                     apontamentos.push(new Apontamento(
-                        dado._data,
-                        dado._ofer,
-                        dado._qthr,
-                        dado._qtal,
-                        dado._qtvs,
                         dado._id,
-                        dado._fg,
+                        dado._data,
                         dado._sq,
-                        dado._vs
+                        dado._vlof,
+                        dado._qtes,
+                        dado._qtms,
+                        dado._qtrl,
+                        dado._qtpg,
+                        dado._fg,
                     ));
 
                     atual.continue();
