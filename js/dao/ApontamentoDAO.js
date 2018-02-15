@@ -6,6 +6,21 @@ class ApontamentoDAO extends DAO {
         super(connection, 'apontamentos');
     }
 
+    static newApontamento(o){
+        return new Apontamento(
+            o._id,
+            o._dt instanceof Date && !isNaN(o._dt.valueOf()) ? o._dt : DateHelper.data(o._dt),
+            o._sq,
+            o._of,
+            o._mb,
+            o._es,
+            o._ms,
+            o._rl,
+            o._pg,
+            o._fg
+        );
+    }
+
     get store() {
         return this._connection
                     .transaction([this._store],'readwrite')
@@ -16,7 +31,6 @@ class ApontamentoDAO extends DAO {
         //    console.log(e);
         //    console.log('Transação abortada');
         //};
-
     }
 
     listaTodos() {
@@ -27,19 +41,7 @@ class ApontamentoDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    let dado = atual.value;
-                    apontamentos.push(new Apontamento(
-                        dado._id,
-                        dado._data,
-                        dado._sq,
-                        dado._vlof,
-                        dado._qtes,
-                        dado._qtms,
-                        dado._qtrl,
-                        dado._qtpg,
-                        dado._fg,
-                    ));
-
+                    apontamentos.push( ApontamentoDAO.newApontamento(atual.value) );
                     atual.continue();
                 } else {
                     resolve(apontamentos);

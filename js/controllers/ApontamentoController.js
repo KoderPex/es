@@ -13,7 +13,7 @@ class ApontamentoController {
 
         this._listaApontamentos = new Bind(
             new ListaApontamentos(),
-            new ApontamentosListView($('#apontamentosListView')),
+            new ApontamentosListView($('#apontamentosView')),
             'adiciona'
         );
 
@@ -23,19 +23,20 @@ class ApontamentoController {
     }
 
     _init() {
-        new ApontamentoService()
+        this._service
             .lista()
-            .then(apontamentos =>
+            .then(apontamentos => {
                 apontamentos.forEach(apontamento =>
-                    this._listaApontamentos.adiciona(apontamento)))
+                    this._listaApontamentos.adiciona(apontamento));
+            })  
             .catch(error => {
                 console.log(error);
                 //this._mensagem.texto = error;
             });
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
-        //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
-        //  AO CLICAR NO BOTAO REDEFINIR CLASSE, APAGAR AS INFORMACOES DE whoami.
+        //  DONE -AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
+        //  TODO -AO CLICAR NO BOTAO REDEFINIR CLASSE, APAGAR AS INFORMACOES DE whoami.
 
         //02 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR AS INFORMACOES DE ACORDOM COM whoami.
         //  TENTAR SE CONECTAR PARA BAIXAR.

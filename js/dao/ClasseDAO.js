@@ -6,14 +6,14 @@ class ClasseDAO extends DAO {
         super(connection,'classes');
     }
 
-    _classData(dado){
+    static newClasse(o){
         return new Classe(
-            dado._id,
-            dado._cd,
-            dado._ds,
-            dado._pub,
-            dado._per,
-            dado._seq
+            o._id,
+            o._cd,
+            o._ds,
+            o._pb,
+            o._pr,
+            o._sq
         );
     }
 
@@ -25,7 +25,7 @@ class ClasseDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    classes.push( this._classData(atual.value) );
+                    classes.push( ClasseDAO.newClasse(atual.value) );
                     atual.continue();
                 } else {
                     resolve(classes);
@@ -43,7 +43,7 @@ class ClasseDAO extends DAO {
                 let atual = e.target.result;
                 if (atual) {
                     if (atual.value._id == pId) {
-                        classe = this._classData(atual.value);
+                        classe = ClasseDAO.newClasse(atual.value);
                     }
                     atual.continue();
                 } else {

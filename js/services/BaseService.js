@@ -13,31 +13,30 @@ class BaseService {
         return ConnectionFactory.getConnection();
     }
 
-   importarClasses(){
-       return this.obterClasses()
+    importarAlunos() {
+        return new Promise((resolve, reject) => resolve());
+    }
+
+    importarClasses(listaAtual) {
+        return this.obterClasses()
+                .then(classes =>
+                    classes.filter(classe =>
+                        !listaAtual.some(classeExistente =>
+                            classe.isEquals(classeExistente))))
                 .then( classes => this.insertClasses(classes) )
                 .catch(error => {
                     console.log(error);
-                    throw new Error('Não foi possível obter a base');
             });
     }
 
-    insertClasses(classes){
+    insertClasses(classes) {
         return new Promise((resolve, reject) => {
             this.daoFactory
                 .then(connection => new ClasseDAO(connection))
                 .then(dao => {
-                    dao.clear();
                     classes.forEach(classe =>
-                        this.insertClasse(dao, new Classe(
-                            classe.id,
-                            classe.cd,
-                            classe.ds,
-                            classe.pub,
-                            classe.per,
-                            classe.sq
-                        )) );
-                    resolve();
+                        this.insertClasse(dao, classe));
+                    resolve(classes);
                 });
         });
     }
@@ -52,10 +51,11 @@ class BaseService {
 
    obterClasses() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/classes/')
-           .catch(error => {
-               console.log(error);
-               throw new Error('Não foi possível obter a base');
-           });
+            .then(classes => classes.map(o => ClasseDAO.newClasse(o)))
+            .catch(error => {
+                console.log(error);
+                throw new Error('Não foi possível obter a base');
+            });
    }
 
    insertApontamento(dao,apontamento) {
@@ -71,40 +71,34 @@ class BaseService {
             this.daoFactory
                 .then(connection => new ApontamentoDAO(connection))
                 .then(dao => {
-                    dao.clear();
                     apontamentos.forEach(apontamento =>
-                        this.insertApontamento(dao, new Apontamento(
-                            apontamento.id,
-                            DateHelper.data(apontamento.data),
-                            apontamento.sq,
-                            apontamento.vlof,
-                            apontamento.qtes,
-                            apontamento.qtms,
-                            apontamento.qtrl,
-                            apontamento.qtpg,
-                            apontamento.fg,
-                        )) );
-                    resolve();
+                        this.insertApontamento(dao, apontamento));
+                    resolve(apontamentos);
                 });
         });
     }
 
     importarApontamentos(listaAtual){
         return this.obterApontamentos()
+                .then(apontamentos =>
+                    apontamentos.filter(apontamento =>
+                        !listaAtual.some(apontamentoExistente =>
+                            apontamento.isEquals(apontamentoExistente)))
+                )
                 .then( apontamentos => this.insertApontamentos(apontamentos) )
                 .catch(error => {
                     console.log(error);
-                    throw new Error('Não foi possível obter a base');
             });
     }
 
    obterApontamentos() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/?id='+window.classeID)
+                .then(apontamentos => apontamentos.map(o => ApontamentoDAO.newApontamento(o)))
                 .catch(error => {
                     console.log(error);
                     throw new Error('Não foi possível obter os apontamentos');
                 });
-}
+    }
 
 
 }

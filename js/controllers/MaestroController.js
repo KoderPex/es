@@ -9,7 +9,7 @@
 class MaestroController {
 
     constructor() {
-        this._populateClasses = new Bind(
+        this._listaClasses = new Bind(
             new ListaClasses(),
             new InputClassView($('#inputClasseView')),
             'adiciona','esvazia'
@@ -46,21 +46,31 @@ class MaestroController {
         //setTimeout( () => this.recuperaClasse(), 5000);
     }
 
+    loadClasses() {
+        let instance = this;
+        return new ClasseService()
+            .lista()
+            .then(classes => {
+                classes.forEach(classe =>
+                    instance._listaClasses.adiciona(classe));
+            });
+    }
+
     recuperaClasse(){
+        let instance = this;
         new WhoAmIService().verifica()
             .then( whoami => {
-                this.mostraClasse(whoami);
-                
+                instance.mostraClasse(whoami);
                 apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 Promise.all([
-                    new BaseService().importarClasses()
-                    //new BaseService().importarAlunos()
+                    //new BaseService().importarAlunos(),
+                    instance.loadClasses()
                 ])
-                .then( () => {
-                    this.escolhe();
-                })
+                .then( () => new BaseService().importarClasses(instance._listaClasses.classes) )
+                .then( () => instance.loadClasses() )
+                .then( () => instance.escolhe() )
                 .catch(error => {
                     throw new Error(error);
                 });
@@ -68,50 +78,32 @@ class MaestroController {
     }
 
     iniciaInformacoesdaClasse(){
-        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").hide();
+        $("#divHeaderClasse, #divTabs").hide();
     }
 
     populaInformacoesdaClasse(){
         $("#liTabClasse").hide();
-        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").show();
-    }
-
-    populateClasses(classes){
-        classes.forEach(classe => {
-            this._populateClasses.adiciona(classe);
-        })
+        $("#divHeaderClasse, #divTabs").show();
     }
 
     escolhe(){
         let instance = this;
-        new ClasseService()
-            .lista()
-            .then(classes => {
-                Promise.all([
-                    instance.populateClasses(classes)
-                ])
-                .then( () => {
-                    $("#cmbWhoAmI").on('change', function(event){
-                        $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
-                    });
-                    $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
-                        new WhoAmIService()
-                            .cadastra( new WhoAmI( $("#cmbWhoAmI").selectpicker('val') ) )
-                            .then( () => instance.recuperaClasse() );
-                    });
-                })
-            })
-            .catch(error => {
-                //this._mensagem.texto = error;
-            });
+        $("#cmbWhoAmI").on('change', function(event){
+            $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
+        });
+        $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
+            new ClasseService().getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
+                .then( classe => new WhoAmIService().cadastra( classe )
+                .then( () => instance.recuperaClasse() ));
+        });
     }
 
     mostraClasse(whoAmI){
-        this._populateClasses.esvazia();
+        this._listaClasses.esvazia();
 
         window.classeID = whoAmI.id;
 
-        this._populateClasses = new Bind(
+        this._listaClasses = new Bind(
             new ListaClasses().adiciona(whoAmI),
             new HeaderClassView( $('#divHeaderClasse')),
             'adiciona'

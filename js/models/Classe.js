@@ -1,12 +1,12 @@
 class Classe {
 
-    constructor(id,cd,ds,pub,per,seq) {
+    constructor(id,cd,ds,pb,pr,sq) {
         this._id = id;
         this._cd = cd;
         this._ds = ds;
-        this._pub = pub;
-        this._per = per;
-        this._seq = seq;
+        this._pb = pb;
+        this._pr = pr;
+        this._sq = sq;
         Object.freeze(this); //isFrozen()
     }
 
@@ -22,16 +22,41 @@ class Classe {
         return this._ds;
     }
 
-    get pub() {
-        return this._pub;
+    get pb() {
+        return this._pb;
     }
 
-    get per() {
-        return this._per;
+    get pr() {
+        return this._pr;
     }
 
-    get seq() {
-        return this._seq;
+    get sq() {
+        return this._sq;
     }
 
+    isEquals(outraClasse) {        
+        return (this._id == outraClasse.id);
+    }
 }
+
+class ListaClasses {
+
+    constructor() {
+        this._classes = [];
+    }
+
+    adiciona(classe) {
+        this._classes.push(classe);
+        return this;
+    }
+
+    get classes() {
+        return [].concat(this._classes);
+    }
+
+    esvazia() {
+        this._classes = [];
+        return this;
+    }
+}
+

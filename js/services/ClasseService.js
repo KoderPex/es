@@ -24,7 +24,7 @@ class ClasseService {
             });
     }
 
-    getClassByID(pId){
+    getClasseByID(pId){
         return this.daoFactory
             .then(dao => dao.recuperaByID(pId))
             .catch(error => {

@@ -1,14 +1,15 @@
 class Apontamento {
 
-    constructor(id,data,sq,vlof,qtes,qtms,qtrl,qtpg,fg) {
+    constructor(id,dt,sq,vo,mb,es,ms,rl,pg,fg) {
         this._id = id;
-        this._data = new Date(data.getTime()); //Programação defensiva
+        this._dt = new Date(dt.getTime()); //Programação defensiva
         this._sq = sq;
-        this._vlof = vlof;
-        this._qtes = qtes;
-        this._qtms = qtms;
-        this._qtrl = qtrl;
-        this._qtpg = qtpg;
+        this._of = vo;
+        this._mb = mb;
+        this._es = es;
+        this._ms = ms;
+        this._rl = rl;
+        this._pg = pg;
         this._fg = fg;
         Object.freeze(this); //isFrozen()
     }
@@ -17,43 +18,70 @@ class Apontamento {
         return this._id;
     }
 
-    get data() {
-        return new Date(this._data.getTime()); //Programação defensiva
+    get dt() {
+        return new Date(this._dt.getTime()); //Programação defensiva
     }
 
     get sq() {
         return this._sq;
     }
 
-    get vl() {
-        return this._vlof;
+    get vo() {
+        return this._vo;
+    }
+
+    get mb() {
+        return this._mb;
     }
 
     get es() {
-        return this._qtes;
+        return this._es;
     }
 
     get ms() {
-        return this._qtms;
+        return this._ms;
     }
 
     get rl() {
-        return this._qtrl;
+        return this._rl;
     }
 
     get pg() {
-        return this._qtpg;
+        return this._pg;
     }
 
     get fg() {
         return this._fg;
     }
 
-    get vs() {
-        return this._vs;
+    isEquals(outroApontamento) {        
+        return (this._dt.getTime() == outroApontamento.dt.getTime());
+    }
+}
+
+class ListaApontamentos {
+
+    constructor() {
+        this._apontamentos = [];
     }
 
-    isEquals(outroApontamento) {        
-        return this._data.getTime() == outroApontamento.data.getTime();
+    adiciona(apontamento) {
+        this._apontamentos.push(apontamento);
+    }
+
+    get apontamentos() {
+        return [].concat(this._apontamentos);
+    }
+
+    esvazia() {
+        this._apontamentos = [];
+    }
+
+    ordena(criterio) {
+        this._apontamentos.sort(criterio);        
+    }
+
+    inverteOrdem() {
+        this._apontamentos.reverse();
     }
 }

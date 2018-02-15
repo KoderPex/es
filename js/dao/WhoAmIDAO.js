@@ -14,7 +14,7 @@ class WhoAmIDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    whoami = new ClasseService().getClassByID(atual.value._id);
+                    whoami = new ClasseService().getClasseByID(atual.value._id);
                     atual.continue();
                 } else {
                     resolve(whoami);
