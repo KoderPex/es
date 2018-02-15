@@ -33,9 +33,9 @@ $(function(){
     	return this;
     };
 
+	window.classeID = null;
     let maestroController = new MaestroController();
-
-    //let apontamentoController = new ApontamentoController();
+    let apontamentoController = null;
     //$('.form').onsubmit = apontamentoController.adiciona.bind(apontamentoController);
     //$('[type=button]').onclick = apontamentoController.apaga.bind(apontamentoController);
 });

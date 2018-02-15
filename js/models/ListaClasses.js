@@ -6,6 +6,7 @@ class ListaClasses {
 
     adiciona(classe) {
         this._classes.push(classe);
+        return this;
     }
 
     get classes() {
@@ -14,5 +15,6 @@ class ListaClasses {
 
     esvazia() {
         this._classes = [];
+        return this;
     }
 }

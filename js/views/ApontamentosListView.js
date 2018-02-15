@@ -6,12 +6,6 @@ class ApontamentosListView extends View {
 
     constructor(elemento){
         super(elemento);
-
-        elemento.on('click', function(event){
-            if (event.target.nodeName == 'TH') {
-                currentInstance().ordena(event.target.textContent.toLowerCase());
-            }
-        });
     }
 
     card(color,icon,title,val){

@@ -38,7 +38,7 @@ class ClasseDAO extends DAO {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
-            let classes = null;
+            let classe = null;
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {

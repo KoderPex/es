@@ -4,8 +4,8 @@ class ListaApontamentos {
         this._apontamentos = [];
     }
 
-    adiciona(negociacao) {
-        this._apontamentos.push(negociacao);
+    adiciona(apontamento) {
+        this._apontamentos.push(apontamento);
     }
 
     get apontamentos() {

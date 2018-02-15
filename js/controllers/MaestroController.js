@@ -12,7 +12,7 @@ class MaestroController {
         this._populateClasses = new Bind(
             new ListaClasses(),
             new InputClassView($('#inputClasseView')),
-            'adiciona'
+            'adiciona','esvazia'
         );
         this._init();
     }
@@ -50,11 +50,13 @@ class MaestroController {
         new WhoAmIService().verifica()
             .then( whoami => {
                 this.mostraClasse(whoami);
+                
+                apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 Promise.all([
-                    new BaseService().importarClasses(),
-                    new BaseService().importarAlunos()
+                    new BaseService().importarClasses()
+                    //new BaseService().importarAlunos()
                 ])
                 .then( () => {
                     this.escolhe();
@@ -66,7 +68,12 @@ class MaestroController {
     }
 
     iniciaInformacoesdaClasse(){
-        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos, #buttonsView").hide();
+        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").hide();
+    }
+
+    populaInformacoesdaClasse(){
+        $("#liTabClasse").hide();
+        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos").show();
     }
 
     populateClasses(classes){
@@ -99,11 +106,18 @@ class MaestroController {
             });
     }
 
-    mostraClasse(whoAmIID){
-        $("#inputClasseView").hide();
-        $("#divHeaderClasse, #liTabMembros, #liTabApontamentos, #buttonsView").show();
-        console.log('Mostrar Informações da classe')
-        console.log(whoAmIID);
+    mostraClasse(whoAmI){
+        this._populateClasses.esvazia();
+
+        window.classeID = whoAmI.id;
+
+        this._populateClasses = new Bind(
+            new ListaClasses().adiciona(whoAmI),
+            new HeaderClassView( $('#divHeaderClasse')),
+            'adiciona'
+        );
+
+        this.populaInformacoesdaClasse();
     }
 
 }

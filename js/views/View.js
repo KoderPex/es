@@ -12,12 +12,14 @@ class View {
     update(model) {
         this._elemento.html(this.template(model));
         this.updateInjectedObjects();
+        return this;
     }
 
     updateInjectedObjects(){
         $('.date').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
         $('select:not(.ms)').selectpicker();
         $('.bootstrap-select>.btn-default').removeClass('btn-default');
+        return this;
     }
 
 }

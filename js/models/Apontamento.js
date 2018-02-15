@@ -1,47 +1,52 @@
 class Apontamento {
 
-    constructor(data,ofer,qthr,qtal,qtvs,id,fg,sq) {
-        this._data = new Date(data.getTime()); //Programação defensiva
-        this._ofer = ofer;
-        this._qthr = qthr;
-        this._qtal = qtal;
-        this._qtvs = qtvs;
+    constructor(id,data,sq,vlof,qtes,qtms,qtrl,qtpg,fg) {
         this._id = id;
-        this._fg = fg;
+        this._data = new Date(data.getTime()); //Programação defensiva
         this._sq = sq;
+        this._vlof = vlof;
+        this._qtes = qtes;
+        this._qtms = qtms;
+        this._qtrl = qtrl;
+        this._qtpg = qtpg;
+        this._fg = fg;
         Object.freeze(this); //isFrozen()
     }
     
-    get data() {
-        return new Date(this._data.getTime()); //Programação defensiva
-    }
-
     get id() {
         return this._id;
     }
 
-    get fg() {
-        return this._fg;
-    }
-
-    get vl() {
-        return this._ofer;
-    }
-
-    get al() {
-        return this._qtal;
-    }
-
-    get vs() {
-        return this._qtvs;
-    }
-
-    get hr() {
-        return this._qthr;
+    get data() {
+        return new Date(this._data.getTime()); //Programação defensiva
     }
 
     get sq() {
         return this._sq;
+    }
+
+    get vl() {
+        return this._vlof;
+    }
+
+    get es() {
+        return this._qtes;
+    }
+
+    get ms() {
+        return this._qtms;
+    }
+
+    get rl() {
+        return this._qtrl;
+    }
+
+    get pg() {
+        return this._qtpg;
+    }
+
+    get fg() {
+        return this._fg;
     }
 
     isEquals(outroApontamento) {        

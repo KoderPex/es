@@ -9,7 +9,8 @@ class InputClassView extends View {
     }
 
     template(model) {
-        return `
+        return model.classes.length > 0
+         ? `
             <div class="col-md-12">
                 <div class="form-group">
                     <div class="form-line">
@@ -32,7 +33,7 @@ class InputClassView extends View {
                     <span>CONFIRMAR CLASSE</span>
                 </button>
             </div>
-        `;
+        ` : ``;
     }
 
 }
