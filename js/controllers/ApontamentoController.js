@@ -25,10 +25,8 @@ class ApontamentoController {
     _init() {
         this._service
             .lista()
-            .then(apontamentos => {
-                apontamentos.forEach(apontamento =>
-                    this._listaApontamentos.adiciona(apontamento));
-            })  
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) )
+            .then( () => this.importaApontamentos() )
             .catch(error => {
                 console.log(error);
                 //this._mensagem.texto = error;
@@ -55,7 +53,7 @@ class ApontamentoController {
         //1 - PRONTO PARA ENVIO
         //2 - ATUALIZADO
 
-        setTimeout( () => this.importaApontamentos(), 3000);
+        //setTimeout( () => this.importaApontamentos(), 3000);
     }
 
     adiciona(event) {
@@ -77,7 +75,14 @@ class ApontamentoController {
     }
 
     importaApontamentos() {
-        new BaseService().importarApontamentos(this._listaApontamentos.apontamentos);
+        new BaseService()
+            .importarApontamentos(this._listaApontamentos.apontamentos)
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) );
+    }
+
+    atualizaListaLocal(apontamentos) {
+        return apontamentos.forEach(apontamento =>
+                this._listaApontamentos.adiciona(apontamento));
     }
 
     _criaApontamento() {
