@@ -51,7 +51,7 @@ class BaseService {
 
    obterClasses() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/classes/')
-            .then(classes => classes.map(o => ClasseDAO.newClasse(o)))
+            .then(classes => classes.map(o => ClasseDAO.instance(o)))
             .catch(error => {
                 console.log(error);
                 throw new Error('Não foi possível obter a base');
@@ -93,7 +93,7 @@ class BaseService {
 
    obterApontamentos() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/?id='+window.classeID)
-                .then(apontamentos => apontamentos.map(o => ApontamentoDAO.newApontamento(o)))
+                .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
                 .catch(error => {
                     console.log(error);
                     throw new Error('Não foi possível obter os apontamentos');
