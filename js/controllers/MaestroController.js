@@ -14,6 +14,9 @@ class MaestroController {
             new InputClassView($('#inputClasseView')),
             'adiciona','esvazia'
         );
+        this._classeService = new ClasseService();
+        this._whoAmIService = new WhoAmIService();
+        this._baseService = new BaseService();
         this._init();
     }
 
@@ -48,7 +51,7 @@ class MaestroController {
 
     loadClasses() {
         let instance = this;
-        return new ClasseService()
+        return this._classeService
             .lista()
             .then(classes => {
                 classes.forEach(classe =>
@@ -58,17 +61,17 @@ class MaestroController {
 
     recuperaClasse(){
         let instance = this;
-        new WhoAmIService().verifica()
+        this._whoAmIService.verifica()
             .then( whoami => {
                 instance.mostraClasse(whoami);
                 apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 Promise.all([
-                    //new BaseService().importarAlunos(),
+                    this._baseService.importarAlunos(),
                     instance.loadClasses()
                 ])
-                .then( () => new BaseService().importarClasses(instance._listaClasses.classes) )
+                .then( () => this._baseService.importarClasses(instance._listaClasses.classes) )
                 .then( () => instance.loadClasses() )
                 .then( () => instance.escolhe() )
                 .catch(error => {
@@ -92,8 +95,8 @@ class MaestroController {
             $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
         });
         $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
-            new ClasseService().getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
-                .then( classe => new WhoAmIService().cadastra( classe )
+            this._classeService.getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
+                .then( classe => this._whoAmIService.cadastra( classe )
                 .then( () => instance.recuperaClasse() ));
         });
     }

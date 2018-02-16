@@ -14,7 +14,9 @@ class BaseService {
     }
 
     importarAlunos() {
-        return new Promise((resolve, reject) => resolve());
+        return new Promise((resolve, reject) => {
+            resolve();
+        });
     }
 
     importarClasses(listaAtual) {
