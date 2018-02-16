@@ -6,7 +6,7 @@ class ApontamentoDAO extends DAO {
         super(connection, 'apontamentos');
     }
 
-    static newApontamento(o){
+    static instance(o){
         return new Apontamento(
             o._id,
             o._dt instanceof Date && !isNaN(o._dt.valueOf()) ? o._dt : DateHelper.data(o._dt),
@@ -41,7 +41,7 @@ class ApontamentoDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    apontamentos.push( ApontamentoDAO.newApontamento(atual.value) );
+                    apontamentos.push( ApontamentoDAO.instance(atual.value) );
                     atual.continue();
                 } else {
                     resolve(apontamentos);

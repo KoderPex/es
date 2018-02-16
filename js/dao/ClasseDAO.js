@@ -6,7 +6,7 @@ class ClasseDAO extends DAO {
         super(connection,'classes');
     }
 
-    static newClasse(o){
+    static instance(o){
         return new Classe(
             o._id,
             o._cd,
@@ -25,7 +25,7 @@ class ClasseDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    classes.push( ClasseDAO.newClasse(atual.value) );
+                    classes.push( ClasseDAO.instance(atual.value) );
                     atual.continue();
                 } else {
                     resolve(classes);
@@ -43,7 +43,7 @@ class ClasseDAO extends DAO {
                 let atual = e.target.result;
                 if (atual) {
                     if (atual.value._id == pId) {
-                        classe = ClasseDAO.newClasse(atual.value);
+                        classe = ClasseDAO.instance(atual.value);
                     }
                     atual.continue();
                 } else {
