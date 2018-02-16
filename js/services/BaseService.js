@@ -60,10 +60,10 @@ class BaseService {
 
    insertApontamento(dao,apontamento) {
         return dao.adiciona(apontamento)
-        .catch(erro => {
-            console.log(erro);
-            throw new Error("Não foi possível adicionar")
-        });
+            .catch(erro => {
+                console.log(erro);
+                throw new Error("Não foi possível adicionar")
+            });
     }
 
     insertApontamentos(apontamentos){
@@ -86,18 +86,16 @@ class BaseService {
                             apontamento.isEquals(apontamentoExistente)))
                 )
                 .then( apontamentos => this.insertApontamentos(apontamentos) )
-                .catch(error => {
-                    console.log(error);
-            });
+                .catch( error => console.log(error) );
     }
 
    obterApontamentos() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/?id='+window.classeID)
-                .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
-                .catch(error => {
-                    console.log(error);
-                    throw new Error('Não foi possível obter os apontamentos');
-                });
+            .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
+            .catch(error => {
+                console.log(error);
+                throw new Error('Não foi possível obter os apontamentos');
+            });
     }
 
 
