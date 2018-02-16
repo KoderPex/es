@@ -21,6 +21,7 @@ class MaestroController {
     }
 
     _init() {
+        this._baseService.importarAlunos();
         this.iniciaInformacoesdaClasse();
         this.recuperaClasse();
 
@@ -51,7 +52,7 @@ class MaestroController {
 
     loadClasses() {
         let instance = this;
-        return this._classeService
+        return instance._classeService
             .lista()
             .then(classes => {
                 classes.forEach(classe =>
@@ -61,17 +62,16 @@ class MaestroController {
 
     recuperaClasse(){
         let instance = this;
-        this._whoAmIService.verifica()
+        instance._whoAmIService.verifica()
             .then( whoami => {
                 instance.mostraClasse(whoami);
                 apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 Promise.all([
-                    this._baseService.importarAlunos(),
                     instance.loadClasses()
                 ])
-                .then( () => this._baseService.importarClasses(instance._listaClasses.classes) )
+                .then( () => instance._baseService.importarClasses(instance._listaClasses.classes) )
                 .then( () => instance.loadClasses() )
                 .then( () => instance.escolhe() )
                 .catch(error => {
@@ -95,8 +95,8 @@ class MaestroController {
             $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
         });
         $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
-            this._classeService.getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
-                .then( classe => this._whoAmIService.cadastra( classe )
+            instance._classeService.getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
+                .then( classe => instance._whoAmIService.cadastra( classe )
                 .then( () => instance.recuperaClasse() ));
         });
     }

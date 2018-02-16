@@ -4,13 +4,14 @@ class Apontamento {
         this._id = id;
         this._dt = new Date(dt.getTime()); //Programação defensiva
         this._sq = sq;
-        this._of = vo;
+        this._vo = vo;
         this._mb = mb;
         this._es = es;
         this._ms = ms;
         this._rl = rl;
         this._pg = pg;
         this._fg = fg;
+        this._nomes = [];
         Object.freeze(this); //isFrozen()
     }
     
@@ -52,6 +53,10 @@ class Apontamento {
 
     get fg() {
         return this._fg;
+    }
+
+    get nomes() {
+        return this._nomes;
     }
 
     isEquals(outroApontamento) {        
