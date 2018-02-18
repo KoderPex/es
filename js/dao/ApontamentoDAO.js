@@ -44,12 +44,10 @@ class ApontamentoDAO extends DAO {
                 if (atual) {
                     apontamentos.push( ApontamentoDAO.instance(atual.value) );
                     atual.continue();
+                } else if (apontamentos.length == 0) {
+                    reject();
                 } else {
-                    if (apontamentos.length == 0) {
-                        reject();
-                    } else {
-                        resolve(apontamentos);
-                    }
+                    resolve(apontamentos);
                 }
             };
         });

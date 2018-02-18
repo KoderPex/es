@@ -37,20 +37,16 @@ class ApontamentosListView extends View {
 
                     let content = '';
                     if (a.fg == '0') {
-                        content = `
-                            ${a.nomes.map(n => {
-                                return `id:${n.id}, nm:${n.nm}`
-                            }).join('')}
-                        `;
+                        content = `<div class="panel-body" id="apontamentosNomesView"></div>`;
                     } else {
-                        content = `
+                        content = `<div class="panel-body">
                             ${this.card("col-indigo","face","PRESENÇA",this.palAl(15,a.mb))}
                             ${this.card("col-black","book","ESTUDO",this.palAl(a.es,a.mb))}
                             ${this.card("col-green","attach_money","OFERTA",a.vo)}
                             ${this.card("col-blue","public","MISSÃO",a.ms)}
                             ${this.card("col-orange","group","RELACIONAMENTO",a.rl)}
                             ${this.card("col-red","group_work","PEQUENO GRUPO",a.pg)}
-                        `;
+                        </div>`;
                     }
                     return `
                     <div class="panel ${panel}">
@@ -63,7 +59,7 @@ class ApontamentosListView extends View {
                             </h4>
                         </div>
                         <div id="collapseFour_${a.id}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour_${a.id}" aria-expanded="false" style="height: 0px;">
-                            <div class="panel-body">${content}</div>
+                            ${content}
                         </div>
                     </div>
                     `

@@ -23,3 +23,24 @@ class Nome {
         return this._id == outro.id;
     }
 }
+
+class ListaNomes {
+
+    constructor() {
+        this._nomes = [];
+    }
+
+    adiciona(nome) {
+        this._nomes.push(nome);
+        return this;
+    }
+
+    get nomes() {
+        return [].concat(this._nomes);
+    }
+
+    esvazia() {
+        this._nomes = [];
+        return this;
+    }
+}

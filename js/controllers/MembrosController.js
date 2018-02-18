@@ -22,7 +22,7 @@ class MembrosController {
 
     _init() {
         this._service
-            .lista()
+            .lista(window.classeID)
             .then( nomes => this.atualizaListaLocal(nomes) )
             .catch(error => {
                 console.log(error);

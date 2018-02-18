@@ -1,4 +1,4 @@
-const stores = ['whoami','apontamentos','nomes','classes'];
+const stores = ['whoami','apontamentos','nomes','classes','logs'];
 let version = 1;
 const dbName = 'esiasdcr';
 

@@ -27,29 +27,6 @@ class ApontamentoController {
             .lista()
             .then( apontamentos => this.atualizaListaLocal(apontamentos) )
             .catch( () => this.importaApontamentos() );
-
-        //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
-        //  DONE -AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
-        //  TODO -AO CLICAR NO BOTAO REDEFINIR CLASSE, APAGAR AS INFORMACOES DE whoami.
-
-        //02 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR AS INFORMACOES DE ACORDOM COM whoami.
-        //  TENTAR SE CONECTAR PARA BAIXAR.
-        //  SE NAO CONSEGUIU BAIXAR, PROGRAMA TENTATIVA PARA 1:30.
-        //  VERIFICA SE TODAS AS CLASSES SUBMETERAM AS ATUALIZACOES (host).
-        //  SE HA CLASSES A SUBMETER, PROGRAMA TENTATIVA PARA 1:30.
-        //  SE TODAS AS CLASSES ATUALIZADAS (host), MARCA CLASSE ATUALIZADA, RE-CRIA BANCO (local).
-
-        //03 - SE BASE (local) EXISTE, VERIFICAR SE PRECISA ENVIAR (host) APONTAMENTOS FECHADOS.
-        //  TENTAR SE CONECTAR (host) PARA ENVIAR.
-        //  SE NAO CONSEGUIU ENVIAR, PROGRAMA TENTATIVA PARA OS PROXIMOS 5:00.
-        //  SE CONSEGUIR ENVIAR, APAGA A BASE (local) DE CLASSES/PESSOAS/APONTAMENTOS, E VOLTA PARA O PASSO 1.
-
-        //FLAGS
-        //0 - EM ABERTO
-        //1 - PRONTO PARA ENVIO
-        //2 - ATUALIZADO
-
-        //setTimeout( () => this.importaApontamentos(), 3000);
     }
 
     adiciona(event) {

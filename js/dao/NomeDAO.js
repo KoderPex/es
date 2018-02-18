@@ -26,6 +26,8 @@ class NomeDAO extends DAO {
                         nomes.push( NomeDAO.instance(atual.value) );
                     }
                     atual.continue();
+                } else if (nomes.length == 0) {
+                    reject();
                 } else {
                     resolve(nomes);
                 }

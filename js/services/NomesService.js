@@ -17,11 +17,7 @@ class NomesService {
 
     lista(classeID = null) {
         return this.daoFactory
-            .then(dao => dao.recupera(classeID))
-            .catch(error => {
-                console.log(error);
-                throw new Error("Não foi possível obter os nomes");
-            });
+            .then(dao => dao.recupera(classeID));
     }
 
 }
