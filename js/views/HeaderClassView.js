@@ -6,8 +6,7 @@ class HeaderClassView extends View {
 
     template(model) {
         return `
-        <h4>Classe: ${model.classes[0].ds} (${model.classes[0].cd})</h4>
-        <div>Publico: ${model.classes[0].pb} - Período: ${model.classes[0].pr}</div>
+        <h4>${("00"+model.classes[0].sq).slice(-2)}&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;${model.classes[0].ds} (${model.classes[0].cd})&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;${model.classes[0].pb}&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;${model.classes[0].pr} PERÍODO</h4>
         `;
     }
 

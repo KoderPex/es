@@ -26,11 +26,7 @@ class ApontamentoController {
         this._service
             .lista()
             .then( apontamentos => this.atualizaListaLocal(apontamentos) )
-            .then( () => this.importaApontamentos() )
-            .catch(error => {
-                console.log(error);
-                //this._mensagem.texto = error;
-            });
+            .catch( () => this.importaApontamentos() );
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
         //  DONE -AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.

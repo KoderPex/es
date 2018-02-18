@@ -1,6 +1,6 @@
 class Apontamento {
 
-    constructor(id,dt,sq,vo,mb,es,ms,rl,pg,fg) {
+    constructor(id,dt,sq,vo,mb,es,ms,rl,pg,fg,nomes = []) {
         this._id = id;
         this._dt = new Date(dt.getTime()); //Programação defensiva
         this._sq = sq;
@@ -11,10 +11,10 @@ class Apontamento {
         this._rl = rl;
         this._pg = pg;
         this._fg = fg;
-        this._nomes = [];
+        this._nomes = nomes;
         Object.freeze(this); //isFrozen()
     }
-    
+
     get id() {
         return this._id;
     }
@@ -56,10 +56,15 @@ class Apontamento {
     }
 
     get nomes() {
-        return this._nomes;
+        return [].concat(this._nomes);
     }
 
-    isEquals(outroApontamento) {        
+    set nomes(nomes) {
+        this._nomes = [].concat(nomes);
+        return this;
+    }
+
+    isEquals(outroApontamento) {
         return (this._dt.getTime() == outroApontamento.dt.getTime());
     }
 }
@@ -72,6 +77,7 @@ class ListaApontamentos {
 
     adiciona(apontamento) {
         this._apontamentos.push(apontamento);
+        return this;
     }
 
     get apontamentos() {
@@ -80,13 +86,16 @@ class ListaApontamentos {
 
     esvazia() {
         this._apontamentos = [];
+        return this;
     }
 
     ordena(criterio) {
-        this._apontamentos.sort(criterio);        
+        this._apontamentos.sort(criterio);
+        return this;
     }
 
     inverteOrdem() {
         this._apontamentos.reverse();
+        return this;
     }
 }

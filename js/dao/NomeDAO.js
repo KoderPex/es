@@ -14,7 +14,7 @@ class NomeDAO extends DAO {
         );
     }
 
-    listaTodos() {
+    recupera(classeID = null) {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
@@ -22,8 +22,9 @@ class NomeDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    nomes.push( NomeDAO.instance(atual.value) );
-
+                    if ( classeID == null || atual.value._ic == classeID ) {
+                        nomes.push( NomeDAO.instance(atual.value) );
+                    }
                     atual.continue();
                 } else {
                     resolve(nomes);
@@ -31,4 +32,5 @@ class NomeDAO extends DAO {
             };
         });
     }
+
 }
