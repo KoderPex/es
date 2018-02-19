@@ -11,13 +11,13 @@ class ProxyFactory {
             get(target, prop, receiver) {
                 if (props.includes(prop) && typeof(target[prop]) == typeof(Function)) {
                     return function() {
-                        console.log(`a propriedade "${prop}" foi interceptada`);
+                        //console.log(`a propriedade "${prop}" foi interceptada`);
                         let retorno = Reflect.apply(target[prop], target, arguments);
                         acao(target);
                         return retorno;
                     }
                 }
-                return Reflect.get(target, prop, receiver);       
+                return Reflect.get(target, prop, receiver);
             },
 
             set(target, prop, value, receiver) {

@@ -30,7 +30,7 @@ class DAO {
             let request = this.store.add(item);
 
             request.onsuccess = e => {
-                resolve();
+                resolve('objeto adicionado com sucesso em '+this._store);
             };
 
             request.onerror = e => {

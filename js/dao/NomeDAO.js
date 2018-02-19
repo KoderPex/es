@@ -6,7 +6,15 @@ class NomeDAO extends DAO {
         super(connection,'nomes');
     }
 
-    listaTodos() {
+    static instance(o){
+        return new Nome(
+            o._id,
+            o._ic,
+            o._nm
+        );
+    }
+
+    recupera(classeID = null) {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
@@ -14,19 +22,17 @@ class NomeDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    let dado = atual.value;
-                    nomes.push(new Nome(
-                        dado._id,
-                        dado._ic,
-                        dado._nm,
-                        dado._dt
-                    ));
-
+                    if ( classeID == null || atual.value._ic == classeID ) {
+                        nomes.push( NomeDAO.instance(atual.value) );
+                    }
                     atual.continue();
+                } else if (nomes.length == 0) {
+                    reject();
                 } else {
                     resolve(nomes);
                 }
             };
         });
     }
+
 }

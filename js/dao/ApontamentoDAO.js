@@ -6,18 +6,19 @@ class ApontamentoDAO extends DAO {
         super(connection, 'apontamentos');
     }
 
-    static instance(o){
+    static instance(o,nomes){
         return new Apontamento(
             o._id,
             o._dt instanceof Date && !isNaN(o._dt.valueOf()) ? o._dt : DateHelper.data(o._dt),
             o._sq,
-            o._of,
+            o._vo,
             o._mb,
             o._es,
             o._ms,
             o._rl,
             o._pg,
-            o._fg
+            o._fg,
+            nomes
         );
     }
 
@@ -43,6 +44,8 @@ class ApontamentoDAO extends DAO {
                 if (atual) {
                     apontamentos.push( ApontamentoDAO.instance(atual.value) );
                     atual.continue();
+                } else if (apontamentos.length == 0) {
+                    reject();
                 } else {
                     resolve(apontamentos);
                 }

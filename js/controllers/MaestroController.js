@@ -14,12 +14,18 @@ class MaestroController {
             new InputClassView($('#inputClasseView')),
             'adiciona','esvazia'
         );
+        this._classeService = new ClasseService();
+        this._whoAmIService = new WhoAmIService();
+        this._baseService = new BaseService();
+        this._nomesService = new NomesService();
         this._init();
     }
 
     _init() {
-        this.iniciaInformacoesdaClasse();
-        this.recuperaClasse();
+        Promise.all([
+            this.iniciaInformacoesdaClasse()
+        ])
+        .then( () => this.recuperaClasse() );
 
         //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
         //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
@@ -48,7 +54,7 @@ class MaestroController {
 
     loadClasses() {
         let instance = this;
-        return new ClasseService()
+        return instance._classeService
             .lista()
             .then(classes => {
                 classes.forEach(classe =>
@@ -56,19 +62,32 @@ class MaestroController {
             });
     }
 
+    recuperaNomes(whoami) {
+        let instance = this;
+        instance._nomesService.lista(whoami._id)
+            .catch(error => {
+                Promise.all([
+                    this._baseService.importarAlunos()
+                ])
+                .catch(error => {
+                    throw new Error(error);
+                });
+            });
+    }
+
     recuperaClasse(){
         let instance = this;
-        new WhoAmIService().verifica()
+        instance._whoAmIService.verifica()
             .then( whoami => {
+                instance.recuperaNomes(whoami);
                 instance.mostraClasse(whoami);
-                apontamentoController = new ApontamentoController();
+                window.apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 Promise.all([
-                    //new BaseService().importarAlunos(),
                     instance.loadClasses()
                 ])
-                .then( () => new BaseService().importarClasses(instance._listaClasses.classes) )
+                .then( () => instance._baseService.importarClasses(instance._listaClasses.classes) )
                 .then( () => instance.loadClasses() )
                 .then( () => instance.escolhe() )
                 .catch(error => {
@@ -92,9 +111,10 @@ class MaestroController {
             $("#btnGravarWhoAmI").enable( ($(this).selectpicker('val') != '') );
         });
         $("#btnGravarWhoAmI").unbind('click').on('click', function(event){
-            new ClasseService().getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
-                .then( classe => new WhoAmIService().cadastra( classe )
-                .then( () => instance.recuperaClasse() ));
+            instance._classeService.getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
+                .then( classe =>
+                    instance._whoAmIService.cadastra( classe )
+                        .then( () => instance.recuperaClasse() ));
         });
     }
 

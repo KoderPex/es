@@ -1,15 +1,10 @@
 class Nome {
 
-    constructor(id,ic,nm,dt) {
+    constructor(id,ic,nm) {
         this._id = id;
         this._ic = ic;
         this._nm = nm;
-        this._dt = new Date(dt.getTime()); //Programação defensiva
         Object.freeze(this); //isFrozen()
-    }
-
-    get dt() {
-        return new Date(this._dt.getTime()); //Programação defensiva
     }
 
     get id() {
@@ -26,5 +21,26 @@ class Nome {
 
     isEquals(outro) {
         return this._id == outro.id;
+    }
+}
+
+class ListaNomes {
+
+    constructor() {
+        this._nomes = [];
+    }
+
+    adiciona(nome) {
+        this._nomes.push(nome);
+        return this;
+    }
+
+    get nomes() {
+        return [].concat(this._nomes);
+    }
+
+    esvazia() {
+        this._nomes = [];
+        return this;
     }
 }
