@@ -8,9 +8,9 @@ class ApontamentosListView extends View {
         super(elemento);
     }
 
-    card(color,icon,title,val){
+    card(size,color,icon,title,val){
         return `
-        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6" style="margin:0px">
+        <div class="${size}" style="margin:0px">
             <div class="info-box-2" style="margin-bottom:10px">
                 <div class="icon">
                     <i class="material-icons ${color}">${icon}</i>
@@ -40,12 +40,13 @@ class ApontamentosListView extends View {
                         content = `<div class="panel-body" id="apontamentosNomesView"></div>`;
                     } else {
                         content = `<div class="panel-body">
-                            ${this.card("col-indigo","face","PRESENÇA",this.palAl(15,a.mb))}
-                            ${this.card("col-black","book","ESTUDO",this.palAl(a.es,a.mb))}
-                            ${this.card("col-green","attach_money","OFERTA",a.vo)}
-                            ${this.card("col-blue","public","MISSÃO",a.ms)}
-                            ${this.card("col-orange","group","RELACIONAMENTO",a.rl)}
-                            ${this.card("col-red","group_work","PEQUENO GRUPO",a.pg)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-indigo","face","Presença",this.palAl(15,a.mb))}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-black","book","Estudo",this.palAl(a.es,a.mb))}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-green","attach_money","Ofertas",a.vo)}
+                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-yellow","star","Visitas",a.ms)}
+                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-blue","public","Missão",a.ms)}
+                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-orange","group","Relacionamento",a.rl)}
+                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-red","group_work","Peq. Grupo",a.pg)}
                         </div>`;
                     }
                     return `
