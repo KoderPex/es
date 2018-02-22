@@ -23,7 +23,7 @@ class MembrosController {
     _init() {
         this._service
             .lista(window.classeID)
-            .then( nomes => this.atualizaListaLocal(nomes) )
+            .then(nomes => this.atualizaListaLocal(nomes))
             .catch(error => {
                 console.log(error);
                 //this._mensagem.texto = error;

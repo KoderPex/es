@@ -40,10 +40,10 @@ class ApontamentosListView extends View {
                         content = `<div class="panel-body" id="apontamentosNomesView"></div>`;
                     } else {
                         content = `<div class="panel-body">
-                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-indigo","mood","Presença",this.palAl(15,a.mb))}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-indigo","mood","Presença",this.palAl(a.pr,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-black","book","Estudo",this.palAl(a.es,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-green","monetization_on","Ofertas",a.vo)}
-                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-yellow","star","Visitas",a.ms)}
+                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-yellow","star","Visitas",a.vs)}
                             ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-blue","public","Missão",a.ms)}
                             ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-orange","group","Relacionamento",a.rl)}
                             ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-red","account_circle","Peq. Grupo",a.pg)}
