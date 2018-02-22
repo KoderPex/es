@@ -11,12 +11,12 @@ class ApontamentosNomesListView extends View {
     card(color,icon,title,val){
         return `
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="margin:0px">
-            <div class="info-box-2" style="margin-bottom:15px">
+            <div class="info-box-2" style="margin-bottom:15px;height:100px">
                 <div class="icon">
                     <i class="material-icons ${color}">${icon}</i>
                 </div>
                 <div class="content" style="width:100%">
-                    <div><h5>${title}</h5></div>
+                    <h4 style="color:black;height:37px">${title}</h4>
                     <div>${val}</div>
                 </div>
             </div>
