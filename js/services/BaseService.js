@@ -106,7 +106,7 @@ class BaseService {
     }
 
    obterApontamentos() {
-        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/?id='+window.classeID)
+        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/?id='+window.classeID)
             .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
             .catch(error => {
                 console.log(error);

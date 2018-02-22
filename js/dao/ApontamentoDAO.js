@@ -6,19 +6,20 @@ class ApontamentoDAO extends DAO {
         super(connection, 'apontamentos');
     }
 
-    static instance(o,nomes){
+    static instance(o){
         return new Apontamento(
             o._id,
             o._dt instanceof Date && !isNaN(o._dt.valueOf()) ? o._dt : DateHelper.data(o._dt),
             o._sq,
             o._vo,
             o._mb,
+            o._pr,
             o._es,
             o._ms,
             o._rl,
             o._pg,
-            o._fg,
-            nomes
+            o._vs,
+            o._fg
         );
     }
 

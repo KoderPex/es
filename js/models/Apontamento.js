@@ -1,17 +1,18 @@
 class Apontamento {
 
-    constructor(id,dt,sq,vo,mb,es,ms,rl,pg,fg,nomes = []) {
+    constructor(id,dt,sq,vo,mb,pr,es,ms,rl,pg,vs,fg) {
         this._id = id;
         this._dt = new Date(dt.getTime()); //Programação defensiva
         this._sq = sq;
         this._vo = vo;
         this._mb = mb;
+        this._pr = pr;
         this._es = es;
         this._ms = ms;
         this._rl = rl;
         this._pg = pg;
+        this._vs = vs;
         this._fg = fg;
-        this._nomes = nomes;
         Object.freeze(this); //isFrozen()
     }
 
@@ -35,6 +36,10 @@ class Apontamento {
         return this._mb;
     }
 
+    get pr() {
+        return this._pr;
+    }
+
     get es() {
         return this._es;
     }
@@ -51,17 +56,12 @@ class Apontamento {
         return this._pg;
     }
 
+    get vs() {
+        return this._vs;
+    }
+
     get fg() {
         return this._fg;
-    }
-
-    get nomes() {
-        return [].concat(this._nomes);
-    }
-
-    set nomes(nomes) {
-        this._nomes = [].concat(nomes);
-        return this;
     }
 
     isEquals(outroApontamento) {
