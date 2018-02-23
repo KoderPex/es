@@ -6,6 +6,42 @@
 //import {ApontamentoService} from '../services/ApontamentoService';
 //import {Bind} from '../helpers/Bind';
 
+class MembrosController {
+
+    constructor() {
+        this._listaLogs = new Bind(
+            new ListaLogs(),
+            new ApontamentosNomesListView($('#apontamentosNomesView')),
+            'adiciona'
+        );
+
+        this._service = new NomesService();
+        this._logsService = new LogsService();
+
+        this._init();
+    }
+
+    _init() {
+        this._service
+            .lista(window.classeID)
+            .then(nomes => this.atualizaListaLocal(nomes))
+            .catch(error => {
+                console.log(error);
+                //this._mensagem.texto = error;
+            });
+    }
+
+    atualizaListaLocal(nomes) {
+        let instance = this;
+        return nomes.forEach(n => 
+            instance._logsService.recupera(n.id, window.classeID)
+                .then( log => instance._listaLogs.adiciona( log.value ) )
+                .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) )
+        );
+    }
+
+}
+
 class MaestroController {
 
     constructor() {
@@ -130,6 +166,81 @@ class MaestroController {
         );
 
         this.populaInformacoesdaClasse();
+    }
+
+}
+
+class ApontamentoController {
+
+    constructor() {
+        this._inputData = $('#data');
+
+        this._listaApontamentos = new Bind(
+            new ListaApontamentos(),
+            new ApontamentosListView($('#apontamentosView')),
+            'adiciona'
+        );
+
+        this._service = new ApontamentoService();
+
+        this._init();
+    }
+
+    _init() {
+        this._service
+            .lista()
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) )
+            .catch( () => this.importaApontamentos() );
+    }
+
+    adiciona(event) {
+        event.preventDefault();
+        this.insertApontamento(this._criaApontamento());
+        //this._mensagem.texto = 'Apontamento adicionado com sucesso';
+    }
+
+    insertApontamento(apontamento) {
+        this._service
+            .cadastra(apontamento)
+            .then( () => {
+                this._listaApontamentos.adiciona(apontamento);
+                this._limpaFormulario();
+        })
+        .catch(
+            //error => this._mensagem.texto = error
+        );
+    }
+
+    importaApontamentos() {
+        new BaseService()
+            .importarApontamentos(this._listaApontamentos.apontamentos)
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) );
+    }
+
+    atualizaListaLocal(apontamentos) {
+        return apontamentos.forEach(apontamento =>
+                this._listaApontamentos.adiciona(apontamento));
+    }
+
+    _criaApontamento() {
+        return new Apontamento(
+            DateHelper.textoParaData(this._inputData.val())
+        )
+    }
+
+    _limpaFormulario(){
+        this._inputData.val('');
+        this._inputData.focus();
+    }
+
+    apaga() {
+        this._service
+            .apaga()
+            .then( mensagem => {
+                //this._mensagem.texto = mensagem;
+                this._listaApontamentos.esvazia();
+            })
+            //.catch(error => this._mensagem.texto = error);
     }
 
 }

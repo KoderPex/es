@@ -8,36 +8,40 @@ class ApontamentosNomesListView extends View {
         super(elemento);
     }
 
-    card(color,icon,title,val){
+    card(color,icon,l){
         return `
         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="margin:0px">
-            <div class="info-box-2" style="margin-bottom:15px">
+            <div class="info-box-2" style="margin-bottom:15px;height:100px">
                 <div class="icon">
                     <i class="material-icons ${color}">${icon}</i>
                 </div>
                 <div class="content" style="width:100%">
-                    <div><h5>${title}</h5></div>
-                    <div>${val}</div>
+                    <h4 style="color:black;height:37px">${l.nm}</h4>
+                    <div>
+                        ${this.swt('Presença:',l,'pr')}
+                        ${this.swt('Estudo:',l,'es')}
+                    </div>
                 </div>
             </div>
         </div>
         `;
     }
 
+    swt(lbl,l,w){
+        let chk = l[w] ? ' checked' : '';
+        return `
+        <div class="switch col-sm-6" style="margin:0px;padding:0px">
+            <label>${lbl} <input type="checkbox" aluno="${l.id}" what="${w}"${chk}><span class="lever switch-col-green"></span></label>
+        </div>
+        `
+    }
+
     template(model) {
         return `
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                ${model.nomes.map(a => {
-                    let switchs = `
-                    <div class="switch col-sm-6" style="margin:0px;padding:0px">
-                        <label>Presença: <input type="checkbox"><span class="lever switch-col-green"></span></label>
-                    </div>
-                    <div class="switch col-sm-6" style="margin:0px;padding:0px">
-                        <label>Estudo: <input type="checkbox"><span class="lever switch-col-green"></span></label>
-                    </div>
-                    `
+                ${model.logs.map(l => {
                     return `
-                    ${this.card('col-red','person',a._nm,switchs)}
+                    ${this.card('col-red','person',l)}
                     `
                 }).join('')}
                 <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
