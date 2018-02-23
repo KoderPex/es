@@ -22,19 +22,6 @@ class View {
         $('.panel.panel-danger').unbind('show.bs.collapse').on('show.bs.collapse', function (e) {
             window.membrosController = new MembrosController();
         });
-        $('.switch>label>input').unbind('change').on('change', function (e) {
-            let service = new LogsService();
-            service.recupera( $(this).attr('aluno'), window.classeID )
-                .then(log => service.updateLog( log.key, $(this).attr('what'), $(this).prop('checked') ))
-                .catch(() => service.cadastra(
-                    new Log( 
-                        $(this).attr('aluno'), 
-                        window.classeID, 
-                        $(this).parent().parent().parent().parent().find('h4').text(), 
-                        $(this).attr('what') == 'pr' ? $(this).prop('checked') : false, 
-                        $(this).attr('what') == 'es' ? $(this).prop('checked') : false )
-                ));
-        });
         return this;
     }
 
