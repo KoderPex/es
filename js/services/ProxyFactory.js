@@ -1,6 +1,6 @@
 class ProxyFactory {
 
-    static _ehFuncao(func) {
+    static ehFuncao(func) {
         return typeof(func) == typeof(Function);
     }
 
@@ -9,9 +9,9 @@ class ProxyFactory {
         return new Proxy(objeto, {
 
             get(target, prop, receiver) {
-                if (props.includes(prop) && typeof(target[prop]) == typeof(Function)) {
+                if (props.includes(prop) && ProxyFactory.ehFuncao(target[prop])) {
                     return function() {
-                        //console.log(`a propriedade "${prop}" foi interceptada`);
+                        console.log(`a propriedade "${prop}" foi interceptada`);
                         let retorno = Reflect.apply(target[prop], target, arguments);
                         acao(target);
                         return retorno;
