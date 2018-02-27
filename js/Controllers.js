@@ -12,7 +12,7 @@ class MembrosController {
         this._listaLogs = new Bind(
             new ListaLogs(),
             new ApontamentosNomesListView($('#apontamentosNomesView')),
-            'adiciona'
+            'refresh','-adiciona'
         );
 
         this._service = new NomesService();
