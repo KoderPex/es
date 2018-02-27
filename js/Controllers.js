@@ -12,7 +12,7 @@ class MembrosController {
         this._listaLogs = new Bind(
             new ListaLogs(),
             new ApontamentosNomesListView($('#apontamentosNomesView')),
-            'lista'
+            'adiciona'
         );
 
         this._service = new NomesService();
@@ -22,25 +22,10 @@ class MembrosController {
     }
 
     _init() {
-        this._service
+        let instance = this;
+        instance._service
             .lista(window.classeID)
-            .then(nomes => this.atualizaListaLocal(nomes))
-            .then( () => {
-                this._listaLogs.lista();
-                $('.switch>label>input').unbind('change').on('change', function (e) {
-                    let service = new LogsService();
-                    service.recupera( $(this).attr('aluno'), window.classeID )
-                        .then(log => service.updateLog( log.key, $(this).attr('what'), $(this).prop('checked') ))
-                        .catch(() => service.cadastra(
-                            new Log( 
-                                $(this).attr('aluno'), 
-                                window.classeID, 
-                                $(this).parent().parent().parent().parent().find('h4').text(), 
-                                $(this).attr('what') == 'pr' ? $(this).prop('checked') : false, 
-                                $(this).attr('what') == 'es' ? $(this).prop('checked') : false )
-                        ));
-                });
-            })
+            .then(nomes => instance.atualizaListaLocal(nomes))
             .catch(error => {
                 console.log(error);
                 //this._mensagem.texto = error;
@@ -50,11 +35,12 @@ class MembrosController {
     atualizaListaLocal(nomes) {
         let instance = this;
         return new Promise((resolve, reject) => {
-            nomes.forEach(n => 
+            nomes.forEach(n => {
                 instance._logsService.recupera(n.id, window.classeID)
                     .then( log => instance._listaLogs.adiciona( log.value ) )
-                    .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) ) );
-            resolve(nomes);
+                    .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) )
+            });
+            resolve();
         });
     }
 

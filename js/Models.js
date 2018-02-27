@@ -77,6 +77,8 @@ class ListaLogs {
         return [].concat(this._logs);
     }
 
+    refresh() {}
+
     esvazia() {
         this._logs = [];
         return this;
