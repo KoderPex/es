@@ -24,6 +24,20 @@ class ApontamentoService {
             .then(dao => dao.listaTodos());
    }
 
+   update(index, what, value) {
+        return this.daoFactory
+            .then(dao => dao.atualiza(index, what, value))
+            .catch(error => {
+            console.log(error);
+            throw new Error("Não foi possível atualizar o apontamento")
+        })
+    }
+
+    recupera(id) {
+        return this.daoFactory
+            .then(dao => dao.recupera(id));
+    }
+
 }
 
 class ClasseService {

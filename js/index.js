@@ -42,7 +42,8 @@ $(function(){
             digitsOptional: false,
             allowMinus: false,
             prefix: 'R$ ',
-            placeholder: '0,00'
+			placeholder: '0,00',
+			removeMaskOnSubmit: true
         }
 	});
 

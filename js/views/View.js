@@ -39,7 +39,9 @@ class View {
         const updateApont = (obj) => {
             if ( obj.val() != obj.attr('old')){
                 obj.attr('old',obj.val());
-                console.log( obj.attr('apont'), obj.attr('what'), obj.val() );
+                let service = new ApontamentoService();
+                service.recupera( obj.attr('apont') )
+                    .then(apontamento => service.update( apontamento.key, obj.attr('what'),obj.val() ));
             }
         }
         $(".spinner").spinner('changing', function(e, newVal, oldVal) {
@@ -49,7 +51,7 @@ class View {
             updateApont($(this));
         });
         $('#divButtonSave').unbind('click').on('click', function(e){
-            console.log('clicou... salvar apontamentos',$(this).attr('apont-id'));
+            console.log('clicou... salvar apontamentos',);
         });
         return this;
     }
