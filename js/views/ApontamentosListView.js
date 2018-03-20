@@ -55,12 +55,12 @@ class ApontamentosListView extends View {
 
         return `
         <div class="${size}">
-            <div class="info-box-2" style="margin-bottom:10px">
+            <div class="info-box-2" style="margin-bottom:15px;height:120px">
                 <div class="icon">
                     <i class="material-icons ${color}">${icon}</i>
                 </div>
-                <div class="content col-md-7">
-                    <div class="text">${title}</div>
+                <div class="content col-md-6">
+                    <div class="text" style="color:black;height:37px">${title}</div>
                     ${apontamento}
                 </div>
             </div>
@@ -79,13 +79,13 @@ class ApontamentosListView extends View {
                     if (a.fg == '0') {
                         content = `<div class="panel-body">
                             <div id="apontamentosNomesView"></div>
-                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-green","monetization_on","Ofertas",a,"vo","money",1)}
-                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-yellow","star","Visitas",a,"vs","number",2)}
-                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-blue","public","Missão",a,"ms","number",3)}
-                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-orange","group","Relacionamento",a,"rl","number",4)}
-                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-red","account_circle","Peq. Grupo",a,"pg","number",5)}
+                            ${this.apoint("col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-12","col-green","monetization_on","Ofertas",a,"vo","money",1)}
+                            ${this.apoint("col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-12","col-yellow","star","Visitas",a,"vs","number",2)}
+                            ${this.apoint("col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-12","col-blue","public","Missão",a,"ms","number",3)}
+                            ${this.apoint("col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-12","col-orange","group","Relacionamento",a,"rl","number",4)}
+                            ${this.apoint("col-xl-2 col-lg-4 col-md-4 col-sm-6 col-xs-12","col-red","account_circle","Peq. Grupo",a,"pg","number",5)}
                             <div class="col-xl-2 col-lg-9 col-md-4 col-sm-6 col-xs-12 pull-right" id="divButtonSave" apont-id="${a.id}">
-                                <button type="button" class="btn bg-teal waves-effect" style="padding:25px 25px;">
+                                <button type="button" class="btn bg-teal waves-effect" style="padding:25px 23px;">
                                     <i class="material-icons">save</i>
                                     <span>FINALIZAR APONTAMENTOS</span>
                                 </button>
@@ -94,13 +94,13 @@ class ApontamentosListView extends View {
                         `;
                     } else {
                         content = `<div class="panel-body" id="">
-                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-indigo","mood","Presença",this.palAl(a.pr,a.mb))}
-                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-black","book","Estudo",this.palAl(a.es,a.mb))}
-                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-green","monetization_on","Ofertas",a.vo)}
-                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-yellow","star","Visitas",a.vs)}
-                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-blue","public","Missão",a.ms)}
-                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-orange","group","Relacionamento",a.rl)}
-                            ${this.card("col-xl-1 col-lg-2 col-md-3 col-sm-3 col-xs-3","col-red","account_circle","Peq. Grupo",a.pg)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-indigo","mood","Presença",this.palAl(a.pr,a.mb))}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-black","book","Estudo",this.palAl(a.es,a.mb))}
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-4 col-xs-12","col-green","monetization_on","Ofertas",a.vo)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-12","col-yellow","star","Visitas",a.vs)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-12","col-blue","public","Missão",a.ms)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-12","col-orange","group","Relacionamento",a.rl)}
+                            ${this.card("col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-12","col-red","account_circle","Peq. Grupo",a.pg)}
                         </div>`;
                     }
                     return `
