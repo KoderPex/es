@@ -27,13 +27,31 @@ class View {
             service.recupera( $(this).attr('aluno'), window.classeID )
                 .then(log => service.updateLog( log.key, $(this).attr('what'), $(this).prop('checked') ))
                 .catch(() => service.cadastra(
-                    new Log( 
-                        $(this).attr('aluno'), 
-                        window.classeID, 
-                        $(this).parent().parent().parent().parent().find('h4').text(), 
-                        $(this).attr('what') == 'pr' ? $(this).prop('checked') : false, 
+                    new Log(
+                        $(this).attr('aluno'),
+                        window.classeID,
+                        $(this).parent().parent().parent().parent().find('h4').text(),
+                        $(this).attr('what') == 'pr' ? $(this).prop('checked') : false,
                         $(this).attr('what') == 'es' ? $(this).prop('checked') : false )
                 ));
+        });
+        $('.money-real').inputmask({alias:'real'});
+        const updateApont = (obj) => {
+            if ( obj.val() != obj.attr('old')){
+                obj.attr('old',obj.val());
+                let service = new ApontamentoService();
+                service.recupera( obj.attr('apont') )
+                    .then(apontamento => service.update( apontamento.key, obj.attr('what'),obj.val() ));
+            }
+        }
+        $(".spinner").spinner('changing', function(e, newVal, oldVal) {
+            updateApont($(this));
+        });
+        $("[apont]").on('change',function(e){
+            updateApont($(this));
+        });
+        $('#divButtonSave').unbind('click').on('click', function(e){
+            console.log('clicou... salvar apontamentos',);
         });
         return this;
     }

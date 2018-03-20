@@ -28,6 +28,46 @@ class ApontamentosListView extends View {
         return q+"/"+a+" <small>("+ Math.ceil((q/a)*100) +"%)</small>";
     }
 
+    apoint(size,color,icon,title,l,w,t,i){
+        let apontamento =
+            ( t == "money"
+                ?
+                `<div class="number">
+                    <div class="input-group">
+                        <div class="form-line">
+                            <input type="text" apont="${l.id}" what="${w}" value="${l[w]}" class="form-control money-real text-center" style="font-size:20px" placeholder="0,00" tabindex="${i}"/>
+                        </div>
+                    </div>
+                </div>`
+                :
+                `<div class="number">
+                    <div class="input-group spinner" data-trigger="spinner">
+                        <div class="form-line">
+                            <input type="text" apont="${l.id}" what="${w}" value="${l[w]}" class="form-control text-center" style="font-size:20px" data-spin="spinner" data-rule="quantity" data-min="0" data-max="999" tabindex="${i}"/>
+                        </div>
+                        <span class="input-group-addon">
+                            <a href="javascript:;" class="spin-up" data-spin="up" tabindex=-1><i class="glyphicon glyphicon-chevron-up"></i></a>
+                            <a href="javascript:;" class="spin-down" data-spin="down" tabindex=-1><i class="glyphicon glyphicon-chevron-down"></i></a>
+                        </span>
+                    </div>
+                </div>`
+            );
+
+        return `
+        <div class="${size}">
+            <div class="info-box-2" style="margin-bottom:10px">
+                <div class="icon">
+                    <i class="material-icons ${color}">${icon}</i>
+                </div>
+                <div class="content col-md-7">
+                    <div class="text">${title}</div>
+                    ${apontamento}
+                </div>
+            </div>
+        </div>
+        `;
+    }
+
     template(model) {
         return `
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -37,9 +77,23 @@ class ApontamentosListView extends View {
 
                     let content = '';
                     if (a.fg == '0') {
-                        content = `<div class="panel-body" id="apontamentosNomesView"></div>`;
+                        content = `<div class="panel-body" id="">
+                            <div id="apontamentosNomesView"></div>
+                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-green","monetization_on","Ofertas",a,"vo","money",1)}
+                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-yellow","star","Visitas",a,"vs","number",2)}
+                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-blue","public","Missão",a,"ms","number",3)}
+                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-orange","group","Relacionamento",a,"rl","number",4)}
+                            ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-red","account_circle","Peq. Grupo",a,"pg","number",5)}
+                            <div class="col-xl-2 col-lg-9 col-md-4 col-sm-6 col-xs-12 pull-right" id="divButtonSave" apont-id="${a.id}">
+                                <button type="button" class="btn bg-teal waves-effect" style="padding:25px 25px;">
+                                    <i class="material-icons">save</i>
+                                    <span>FINALIZAR APONTAMENTOS</span>
+                                </button>
+                            </div>
+                        </div>
+                        `;
                     } else {
-                        content = `<div class="panel-body">
+                        content = `<div class="panel-body" id="">
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-indigo","mood","Presença",this.palAl(a.pr,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-black","book","Estudo",this.palAl(a.es,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-6","col-green","monetization_on","Ofertas",a.vo)}

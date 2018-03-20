@@ -40,16 +40,8 @@ class ApontamentosNomesListView extends View {
         return `
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                 ${model.logs.map(l => {
-                    return `
-                    ${this.card('col-red','person',l)}
-                    `
+                    return `${this.card('col-red','person',l)}`
                 }).join('')}
-                <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <button type="button" class="btn bg-orange waves-effect">
-                        <i class="material-icons">save</i>
-                        <span>FECHAR APONTAMENTOS</span>
-                    </button>
-                </div>
             </div>
             `
            ;

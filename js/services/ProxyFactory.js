@@ -13,7 +13,9 @@ class ProxyFactory {
                     return function() {
                         console.log(`a propriedade "${prop}" foi interceptada`);
                         let retorno = Reflect.apply(target[prop], target, arguments);
-                        acao(target);
+                        if (!props.includes(`-${prop}`)) {
+                            acao(target);
+                        }
                         return retorno;
                     }
                 }

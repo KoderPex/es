@@ -28,7 +28,6 @@ class DAO {
     atualiza(index,what,value){
         return new Promise((resolve,reject) => {
             let request = this.store.get(index);
-
             request.onsuccess = e => {
                 var data = e.target.result;
                 data['_'+what] = value;
@@ -265,6 +264,27 @@ class ApontamentoDAO extends DAO {
                     reject();
                 } else {
                     resolve(apontamentos);
+                }
+            };
+        });
+    }
+
+    recupera(id) {
+        return new Promise((resolve,reject) => {
+            let cursor = this.store.openCursor();
+
+            let log = null;
+            cursor.onsuccess = e => {
+                let atual = e.target.result;
+                if (atual) {
+                    if ( atual.value._id == id ) {
+                        log = { key: atual.key, value: ApontamentoDAO.instance(atual.value) };
+                    }
+                    atual.continue();
+                } else if (log !== null) {
+                    resolve(log);
+                } else {
+                    reject();
                 }
             };
         });

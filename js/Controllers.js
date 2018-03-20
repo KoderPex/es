@@ -34,13 +34,10 @@ class MembrosController {
 
     atualizaListaLocal(nomes) {
         let instance = this;
-        return new Promise((resolve, reject) => {
-            nomes.forEach(n => {
-                instance._logsService.recupera(n.id, window.classeID)
-                    .then( log => instance._listaLogs.adiciona( log.value ) )
-                    .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) )
-            });
-            resolve();
+        nomes.forEach(n => {
+            instance._logsService.recupera(n.id, window.classeID)
+                .then( log => instance._listaLogs.adiciona( log.value ) )
+                .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) )
         });
     }
 
