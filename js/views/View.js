@@ -41,7 +41,13 @@ class View {
                 obj.attr('old',obj.val());
                 let service = new ApontamentoService();
                 service.recupera( obj.attr('apont') )
-                    .then(apontamento => service.update( apontamento.key, obj.attr('what'),obj.val() ));
+                    .then(apontamento => {
+                        let v = obj.val();
+                        if (obj.attr('what') == 'vo'){
+                            v = (v.replace(/[R\$ .,]/gi,'')*1)/100;
+                        }
+                        service.update(apontamento.key, obj.attr('what'), v);
+                    });
             }
         }
         $(".spinner").spinner('changing', function(e, newVal, oldVal) {

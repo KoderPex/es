@@ -10,13 +10,13 @@ class ApontamentosNomesListView extends View {
 
     card(color,icon,l){
         return `
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-xs-6" style="margin:0px">
-            <div class="info-box-2" style="margin-bottom:15px;height:100px">
+        <div class="col-xl-2 col-lg-4 col-md-6 col-sm-6 col-xs-12" style="margin:0px">
+            <div class="info-box-2" style="margin-bottom:15px;height:125px">
                 <div class="icon">
                     <i class="material-icons ${color}">${icon}</i>
                 </div>
                 <div class="content" style="width:100%">
-                    <h4 style="color:black;height:37px">${l.nm}</h4>
+                    <h4 style="color:black;height:45px">${l.nm}</h4>
                     <div>
                         ${this.swt('Presença:',l,'pr')}
                         ${this.swt('Estudo:',l,'es')}
