@@ -77,7 +77,7 @@ class ApontamentosListView extends View {
 
                     let content = '';
                     if (a.fg == '0') {
-                        content = `<div class="panel-body" id="">
+                        content = `<div class="panel-body">
                             <div id="apontamentosNomesView"></div>
                             ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-green","monetization_on","Ofertas",a,"vo","money",1)}
                             ${this.apoint("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-yellow","star","Visitas",a,"vs","number",2)}
