@@ -31,7 +31,20 @@ $(function(){
     		this.attr('disabled','disabled');
     	}
     	return this;
-    };
+	};
+	Inputmask.extendAliases({
+		real: {
+            alias: 'numeric',
+            groupSeparator: '.',
+            autoGroup: true,
+            digits: 2,
+            radixPoint: ",",
+            digitsOptional: false,
+            allowMinus: false,
+            prefix: 'R$ ',
+            placeholder: '0,00'
+        }
+	});
 
 	window.classeID = null;
     window.maestroController = new MaestroController();

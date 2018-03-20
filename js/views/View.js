@@ -22,8 +22,6 @@ class View {
         $('.panel.panel-danger').unbind('show.bs.collapse').on('show.bs.collapse', function (e) {
             window.membrosController = new MembrosController();
         });
-        $('.money-real').inputmask('999.999.999,99', { numericInput: true } );
-        $(".spinner").spinner();
         $('.switch>label>input').unbind('change').on('change', function (e) {
             let service = new LogsService();
             service.recupera( $(this).attr('aluno'), window.classeID )
@@ -37,8 +35,21 @@ class View {
                         $(this).attr('what') == 'es' ? $(this).prop('checked') : false )
                 ));
         });
-        $('#divButtonSave').unbind('click').on('click', function (e) {
-            console.log('clicou... salvar apontamentos');
+        $('.money-real').inputmask({alias:'real'});
+        const updateApont = (obj) => {
+            if ( obj.val() != obj.attr('old')){
+                obj.attr('old',obj.val());
+                console.log( obj.attr('apont'), obj.attr('what'), obj.val() );
+            }
+        }
+        $(".spinner").spinner('changing', function(e, newVal, oldVal) {
+            updateApont($(this));
+        });
+        $("[apont]").on('change',function(e){
+            updateApont($(this));
+        });
+        $('#divButtonSave').unbind('click').on('click', function(e){
+            console.log('clicou... salvar apontamentos',$(this).attr('apont-id'));
         });
         return this;
     }
