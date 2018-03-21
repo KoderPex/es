@@ -25,7 +25,7 @@ class ApontamentosListView extends View {
     }
 
     palAl(q,a){
-        return q+"/"+a+" <small>("+ Math.ceil((q/a)*100) +"%)</small>";
+        return q+"/"+a+" <small>("+ this.pct(q,a) +"%)</small>";
     }
 
     apoint(size,color,icon,title,l,w,t,i){
@@ -66,6 +66,10 @@ class ApontamentosListView extends View {
         `;
     }
 
+    pct(q,a){
+        return Math.ceil((q/a)*100);
+    }
+
     template(model) {
         return `
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -97,8 +101,8 @@ class ApontamentosListView extends View {
                         </div>
                         `;
                     } else {
-                        content = `<div class="panel-body">
-                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-indigo","mood","Presença",this.palAl(a.pr,a.mb))}
+                       content = `<div class="panel-body">
+                            ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-indigo",(this.pct(a.pr,a.mb)>75?"mood":"mood_bad"),"Presença",this.palAl(a.pr,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-6 col-xs-12","col-black","book","Estudo",this.palAl(a.es,a.mb))}
                             ${this.card("col-xl-2 col-lg-3 col-md-4 col-sm-4 col-xs-12","col-green","monetization_on","Ofertas",a.vo)}
                             ${this.card("col-xl-2 col-lg-3 col-md-3 col-sm-4 col-xs-12","col-yellow","star","Visitas",a.vs)}

@@ -33,6 +33,15 @@ class ApontamentoService {
         })
     }
 
+    updateObj(obj){
+        return this.daoFactory
+            .then(dao => dao.atualizaObj(obj))
+            .catch(error => {
+            console.log(error);
+            throw new Error("Não foi possível atualizar o apontamento")
+        })
+    }
+
     recupera(id) {
         return this.daoFactory
             .then(dao => dao.recupera(id));
@@ -164,6 +173,11 @@ class LogsService {
     recupera(id,ic) {
         return this.daoFactory
             .then(dao => dao.recupera(id,ic));
+    }
+
+    contaPrEs(ic) {
+        return this.daoFactory
+            .then(dao => dao.contaPrEs(ic));
     }
 
 }
