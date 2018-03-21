@@ -34,6 +34,25 @@ class DAO {
 
                 var objRequest = this.store.put(data, index);
                 objRequest.onsuccess = function(e){
+                    resolve();
+                    console.log('Success in updating record');
+                };
+            };
+            request.onerror = e => {
+                console.log(e.target.error);
+                reject('Não foi possível atualizar o item.');
+            };
+        });
+    }
+
+    atualizaObj(obj){
+        return new Promise((resolve,reject) => {
+            let request = this.store.get(obj.key);
+            request.onsuccess = e => {
+                var data = e.target.result;
+                var objRequest = this.store.put(obj.value, obj.key);
+                objRequest.onsuccess = function(e){
+                    resolve();
                     console.log('Success in updating record');
                 };
             };
@@ -95,6 +114,33 @@ class LogsDAO extends DAO {
                 }
             };
         });
+    }
+
+    contaPrEs(ic) {
+        return new Promise((resolve,reject) => {
+            let cursor = this.store.openCursor();
+
+            let log = { pr: 0, es: 0 };
+            cursor.onsuccess = e => {
+                let atual = e.target.result;
+                if (atual) {
+                    if ( atual.value._ic == ic ) {
+                        if ( atual.value._pr ) {
+                            log.pr++;
+                        }
+                        if ( atual.value._es ) {
+                            log.es++;
+                        }
+                    }
+                    atual.continue();
+                } else if (log !== null) {
+                    resolve(log);
+                } else {
+                    reject();
+                }
+            };
+        });
+
     }
 
 }

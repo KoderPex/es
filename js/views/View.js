@@ -23,41 +23,17 @@ class View {
             window.membrosController = new MembrosController();
         });
         $('.switch>label>input').unbind('change').on('change', function (e) {
-            let service = new LogsService();
-            service.recupera( $(this).attr('aluno'), window.classeID )
-                .then(log => service.updateLog( log.key, $(this).attr('what'), $(this).prop('checked') ))
-                .catch(() => service.cadastra(
-                    new Log(
-                        $(this).attr('aluno'),
-                        window.classeID,
-                        $(this).parent().parent().parent().parent().find('h4').text(),
-                        $(this).attr('what') == 'pr' ? $(this).prop('checked') : false,
-                        $(this).attr('what') == 'es' ? $(this).prop('checked') : false )
-                ));
+            window.membrosController.updateApontamento( $(this) );
         });
         $('.money-real').inputmask({alias:'real'});
-        const updateApont = (obj) => {
-            if ( obj.val() != obj.attr('old')){
-                obj.attr('old',obj.val());
-                let service = new ApontamentoService();
-                service.recupera( obj.attr('apont') )
-                    .then(apontamento => {
-                        let v = obj.val();
-                        if (obj.attr('what') == 'vo'){
-                            v = (v.replace(/[R\$ .,]/gi,'')*1)/100;
-                        }
-                        service.update(apontamento.key, obj.attr('what'), v);
-                    });
-            }
-        }
         $(".spinner").spinner('changing', function(e, newVal, oldVal) {
-            updateApont($(this));
+            window.membrosController.updateApont($(this));
         });
         $("[apont]").on('change',function(e){
-            updateApont($(this));
+            window.membrosController.updateApont($(this));
         });
         $('#divButtonSave').unbind('click').on('click', function(e){
-            console.log('clicou... salvar apontamentos',);
+            window.membrosController.updateLista($(this).attr('apont-id'));
         });
         return this;
     }

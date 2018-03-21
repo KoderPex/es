@@ -162,7 +162,6 @@ class Apontamento {
         this._pg = pg;
         this._vs = vs;
         this._fg = fg;
-        Object.freeze(this); //isFrozen()
     }
 
     get id() {
@@ -183,6 +182,16 @@ class Apontamento {
 
     get mb() {
         return this._mb;
+    }
+
+    set pr(_pr) {
+        this._pr = _pr;
+        return this;
+    }
+
+    set es(_es) {
+        this._es = _es;
+        return this;
     }
 
     get pr() {
@@ -211,6 +220,11 @@ class Apontamento {
 
     get fg() {
         return this._fg;
+    }
+
+    set fg(_fg) {
+        this._fg = _fg;
+        return this;
     }
 
     isEquals(outroApontamento) {

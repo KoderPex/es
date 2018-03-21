@@ -41,6 +41,84 @@ class MembrosController {
         });
     }
 
+    updateApont(obj) {
+        if ( obj.val() != obj.attr('old')){
+            obj.attr('old',obj.val());
+            let service = new ApontamentoService();
+            service.recupera( obj.attr('apont') )
+                .then(apontamento => {
+                    let v = obj.val();
+                    if (obj.attr('what') == 'vo'){
+                        v = (v.replace(/[R\$ .,]/gi,'')*1)/100;
+                    } else {
+                        v *= 1;
+                    }
+                    service.update(apontamento.key, obj.attr('what'), v);
+                });
+        }
+    }
+
+    updateApontamento(obj) {
+        let service = new LogsService();
+        service.recupera( obj.attr('aluno'), window.classeID )
+            .then(log => service.updateLog( log.key, obj.attr('what'), obj.prop('checked') ))
+            .catch(() => service.cadastra(
+                new Log(
+                    obj.attr('aluno'),
+                    window.classeID,
+                    obj.parent().parent().parent().parent().find('h4').text(),
+                    obj.attr('what') == 'pr' ? obj.prop('checked') : false,
+                    obj.attr('what') == 'es' ? obj.prop('checked') : false )
+            ));
+    }
+
+    updateLista(apontID) {
+        BootstrapDialog.show({
+            title: 'Alerta',
+            message: 'Após a confirmação, não será possível fazer alterações.<br/>Confirma fechamento deste apontamento?',
+            type: BootstrapDialog.TYPE_WARNING,
+            size: BootstrapDialog.SIZE_SMALL,
+            draggable: true,
+            closable: true,
+            closeByBackdrop: false,
+            closeByKeyboard: false,
+            buttons: [
+                { label: 'N&atilde;o',
+                    cssClass: 'btn-success',
+                    action: function( dialogRef ){
+                        dialogRef.close();
+                    }
+                },
+                { label: 'Sim, desejo confirmar!',
+                    icon: 'glyphicon glyphicon-trash',
+                    cssClass: 'btn-danger',
+                    autospin: true,
+                    action: function(dialogRef){
+                        dialogRef.enableButtons(false);
+                        dialogRef.setClosable(false);
+                        let service = new ApontamentoService();
+
+                        service
+                            .recupera( apontID )
+                            .then(apontamento => {
+                                new LogsService().contaPrEs(window.classeID)
+                                    .then( log => {
+                                        apontamento.value.es = log.es;
+                                        apontamento.value.pr = log.pr;
+                                        apontamento.value.fg = "1";
+                                        service.updateObj(apontamento)
+                                            .then( () => {
+                                                window.apontamentoController._init();
+                                                dialogRef.close();
+                                            });
+                                    });
+                            });
+                    }
+                }
+            ]
+        });
+    }
+
 }
 
 class MaestroController {
@@ -176,11 +254,7 @@ class ApontamentoController {
     constructor() {
         this._inputData = $('#data');
 
-        this._listaApontamentos = new Bind(
-            new ListaApontamentos(),
-            new ApontamentosListView($('#apontamentosView')),
-            'adiciona'
-        );
+        this._listaApontamentos = null;
 
         this._service = new ApontamentoService();
 
@@ -188,6 +262,12 @@ class ApontamentoController {
     }
 
     _init() {
+        this._listaApontamentos = new Bind(
+            new ListaApontamentos(),
+            new ApontamentosListView($('#apontamentosView')),
+            'adiciona'
+        );
+
         this._service
             .lista()
             .then( apontamentos => this.atualizaListaLocal(apontamentos) )
