@@ -23,17 +23,17 @@ class View {
             window.membrosController = new MembrosController();
         });
         $('.switch>label>input').unbind('change').on('change', function (e) {
-            window.membrosController.updateApontamento( $(this) );
+            window.apontamentoController.updateApontamento( $(this) );
         });
         $('.money-real').inputmask({alias:'real'});
         $(".spinner").spinner('changing', function(e, newVal, oldVal) {
-            window.membrosController.updateApont($(this));
+            window.apontamentoController.updateApont($(this));
         });
         $("[apont]").on('change',function(e){
-            window.membrosController.updateApont($(this));
+            window.apontamentoController.updateApont($(this));
         });
         $('#divButtonSave').unbind('click').on('click', function(e){
-            window.membrosController.updateLista($(this).attr('apont-id'));
+            window.apontamentoController.updateLista($(this).attr('apont-id'));
         });
         return this;
     }
