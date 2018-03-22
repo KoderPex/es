@@ -24,6 +24,11 @@ class ApontamentoService {
             .then(dao => dao.listaTodos());
    }
 
+   listaSync() {
+        return this.daoFactory
+            .then(dao => dao.listaTodos({field:'_fg', value:'1'}));
+   }
+
    update(index, what, value) {
         return this.daoFactory
             .then(dao => dao.atualiza(index, what, value))

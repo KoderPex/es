@@ -1,8 +1,3 @@
-//import {HttpService} from '../services/HttpService';
-//import {ConnectionFactory} from '../services/ConnectionFactory';
-//import {Apontamento} from '../models/Apontamento';
-//import {ApontamentoDAO} from '../dao/ApontamentoDAO';
-
 class BaseService {
 
     constructor(){

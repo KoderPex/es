@@ -1,10 +1,68 @@
-//import {apontamento} from '../models/apontamento';
-//import {ListaApontamentos} from '../models/ListaApontamentos';
-//import {Mensagem} from '../models/Mensagem';
-//import {ApontamentosView} from '../views/ApontamentosView';
-//import {MensagemView} from '../views/MensagemView';
-//import {ApontamentoService} from '../services/ApontamentoService';
-//import {Bind} from '../helpers/Bind';
+class SyncController {
+
+    constructor() {
+        this._need = null;
+        this._timeInterval = 0.017;
+        this._pend = 0;
+    }
+
+    inactive(){
+        clearInterval(this._need);
+        this._need = null;
+        console.log('Agendamento inativado...');
+    }
+
+    active(){
+        if (this._need == null) {
+            console.log('Agendamento ativado...');
+            this._need = setInterval( () => this.verifica(), (this._timeInterval * 60000) );  
+        }
+    }
+
+    verifica(){
+        console.log('Verifica...');
+        this._pend = 0;
+
+        Promise.all([
+
+            //SE EXISTER APONTAMENTOS, TENTAR ENVIAR. SE NÃO CONSEGUIR, SOMAR ITENS A SINCRONIZAR.
+            new ApontamentoService()
+                .listaSync()
+                .then( apontamentos => ++this._pend )
+
+            //SE EXISTIR TRANSFERENCIAS, TENTAR ENVIAR. SE NÃO CONSEGUIR, SOMAR ITENS A SINCRONIZAR.
+
+            //TENTAR RECEBER CLASSES, SE NAO CONSEGUIR SOMAR ITENS A SINCRONIZAR.
+        ])
+        .then( () => {
+            //QUANDO NÃO HOUVER MAIS SINCRONISMOS A REALIZAR, INATIVAR SINCRONISMO
+            if (this._pend == 0){
+                this.inactive();
+            } else if (this._need == null) {
+                this.active();
+            } else {
+                this.sycronize()
+                    .then( () => {
+                        console.log('Sincronização realizada.');
+                        this.inactive();
+                    })
+                    .catch( () => {
+                        console.log('Falha ao sincronizar...');
+                        this.active();
+                    });
+            }
+        });
+    }
+
+    sycronize(){
+        console.log('Tentando sincronizar...');
+        return new Promise( (resolve, reject) => {
+            resolve('Sincronismo realizado');
+            //reject('Sincronismo não realizado');
+        });
+    }
+
+}
 
 class MembrosController {
 
@@ -175,7 +233,6 @@ class ApontamentoController {
     constructor() {
         this._inputData = $('#data');
         this._listaApontamentos = null;
-        this.syncNeeded = null;
         this._service = new ApontamentoService();
         this._init();
     }
@@ -189,7 +246,6 @@ class ApontamentoController {
 
         this._service
             .lista()
-            //.then( apontamentos => this.verificaSyncApontamentos(apontamentos) )
             .then( apontamentos => this.atualizaListaLocal(apontamentos) )
             .catch( () => this.importaApontamentos() );
     }
@@ -221,33 +277,6 @@ class ApontamentoController {
     atualizaListaLocal(apontamentos) {
         return apontamentos.forEach(apontamento => 
             this._listaApontamentos.adiciona(apontamento));
-    }
-
-    verificaSyncApontamentos(apontamentos){
-        if (!this.syncNeeded && apontamentos.filter((e,i,a) => e.fg == "1").length > 0){
-            return this.sincronizaApontamentos(apontamentos)
-                .then( (apontamentos) => Promise.resolve(apontamentos) )
-                .catch( (apontamentos) => {
-                    console.log('Não deu certo, agendada para 5 min');
-                    this.syncNeeded = setInterval( () => 
-                        this.sincronizaApontamentos(apontamentos)
-                            .then( () => {
-                                console.log('Deu certo, agendamento encerrado.');
-                                clearInterval(this.syncNeeded);
-                                this.syncNeeded = null;
-                            })
-                            .catch( () =>  console.log('Não deu certo, agendada para 5 min') )
-                    , 300000 ) ;
-                    Promise.resolve(apontamentos);
-                });
-        } else {
-            return Promise.resolve(apontamentos);
-        }
-    }
-
-    sincronizaApontamentos(apontamentos){
-        console.log('Tentativa de sincronismo de apontamentos...');
-        return Promise.reject(apontamentos);
     }
 
     _criaApontamento() {
