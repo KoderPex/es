@@ -174,11 +174,9 @@ class ApontamentoController {
 
     constructor() {
         this._inputData = $('#data');
-
         this._listaApontamentos = null;
-
+        this.syncNeeded = null;
         this._service = new ApontamentoService();
-
         this._init();
     }
 
@@ -191,6 +189,7 @@ class ApontamentoController {
 
         this._service
             .lista()
+            //.then( apontamentos => this.verificaSyncApontamentos(apontamentos) )
             .then( apontamentos => this.atualizaListaLocal(apontamentos) )
             .catch( () => this.importaApontamentos() );
     }
@@ -220,8 +219,35 @@ class ApontamentoController {
     }
 
     atualizaListaLocal(apontamentos) {
-        return apontamentos.forEach(apontamento =>
-                this._listaApontamentos.adiciona(apontamento));
+        return apontamentos.forEach(apontamento => 
+            this._listaApontamentos.adiciona(apontamento));
+    }
+
+    verificaSyncApontamentos(apontamentos){
+        if (!this.syncNeeded && apontamentos.filter((e,i,a) => e.fg == "1").length > 0){
+            return this.sincronizaApontamentos(apontamentos)
+                .then( (apontamentos) => Promise.resolve(apontamentos) )
+                .catch( (apontamentos) => {
+                    console.log('Não deu certo, agendada para 5 min');
+                    this.syncNeeded = setInterval( () => 
+                        this.sincronizaApontamentos(apontamentos)
+                            .then( () => {
+                                console.log('Deu certo, agendamento encerrado.');
+                                clearInterval(this.syncNeeded);
+                                this.syncNeeded = null;
+                            })
+                            .catch( () =>  console.log('Não deu certo, agendada para 5 min') )
+                    , 300000 ) ;
+                    Promise.resolve(apontamentos);
+                });
+        } else {
+            return Promise.resolve(apontamentos);
+        }
+    }
+
+    sincronizaApontamentos(apontamentos){
+        console.log('Tentativa de sincronismo de apontamentos...');
+        return Promise.reject(apontamentos);
     }
 
     _criaApontamento() {
