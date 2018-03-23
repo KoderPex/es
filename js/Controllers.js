@@ -2,7 +2,7 @@ class SyncController {
 
     constructor() {
         this._need = null;
-        this._timeInterval = 0.017;
+        this._timeInterval = 0.17;
         this._pend = 0;
     }
 
@@ -14,8 +14,10 @@ class SyncController {
 
     active(){
         if (this._need == null) {
-            console.log('Agendamento ativado...');
-            this._need = setInterval( () => this.verifica(), (this._timeInterval * 60000) );  
+            let m = (this._timeInterval * 60000);
+            console.log('Agendamento ativado:', m, 'minutos');
+            this.verifica();
+            this._need = setInterval( () => this.verifica(), m );
         }
     }
 
@@ -23,7 +25,7 @@ class SyncController {
         console.log('Verifica...');
         this._pend = 0;
 
-        Promise.all([
+        return Promise.all([
 
             //SE EXISTER APONTAMENTOS, TENTAR ENVIAR. SE NÃO CONSEGUIR, SOMAR ITENS A SINCRONIZAR.
             new ApontamentoService()
@@ -275,7 +277,7 @@ class ApontamentoController {
     }
 
     atualizaListaLocal(apontamentos) {
-        return apontamentos.forEach(apontamento => 
+        return apontamentos.forEach(apontamento =>
             this._listaApontamentos.adiciona(apontamento));
     }
 
