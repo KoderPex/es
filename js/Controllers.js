@@ -23,6 +23,7 @@ class SyncController {
             if (!v) this.verifica();
             window._need = setInterval( () =>
                 this.verifica()
+                    .then( () => window.apontamentoController._screenRules() )
                     .catch( () => console.log('Rejeitou...') )
             , m );
         }
@@ -51,7 +52,6 @@ class SyncController {
                         .then( () => {
                             console.log('Sincronização OK.');
                             this.inactive();
-                            window.apontamentoController._screenRules();
                             resolve();
                         })
                         .catch( () => {
