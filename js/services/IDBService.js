@@ -24,6 +24,11 @@ class ApontamentoService {
             .then(dao => dao.listaTodos());
    }
 
+   listaSync() {
+        return this.daoFactory
+            .then(dao => dao.listaTodos({field:'_fg', value:'1'}));
+   }
+
    update(index, what, value) {
         return this.daoFactory
             .then(dao => dao.atualiza(index, what, value))
@@ -45,6 +50,12 @@ class ApontamentoService {
     recupera(id) {
         return this.daoFactory
             .then(dao => dao.recupera(id));
+    }
+
+
+    truncate(){
+        this.daoFactory
+            .then(dao => dao.clear());
     }
 
 }
@@ -95,6 +106,11 @@ class NomesService {
     lista(classeID = null) {
         return this.daoFactory
             .then(dao => dao.recupera(classeID));
+    }
+
+    listaSync() {
+         return this.daoFactory
+             .then(dao => dao.listaTodos({field:'_ns', value: true}));
     }
 
 }
@@ -181,4 +197,3 @@ class LogsService {
     }
 
 }
-

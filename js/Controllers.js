@@ -1,10 +1,247 @@
-//import {apontamento} from '../models/apontamento';
-//import {ListaApontamentos} from '../models/ListaApontamentos';
-//import {Mensagem} from '../models/Mensagem';
-//import {ApontamentosView} from '../views/ApontamentosView';
-//import {MensagemView} from '../views/MensagemView';
-//import {ApontamentoService} from '../services/ApontamentoService';
-//import {Bind} from '../helpers/Bind';
+class SyncController {
+
+    constructor() {
+        window._need = null;
+        this._timeInterval = 0.17;
+        this._pend = 0;
+    }
+
+    get pend(){
+        return this._pend;
+    }
+
+    inactive(){
+        clearInterval(window._need);
+        window._need = null;
+        console.log('Agendamento inativado!');
+    }
+
+    active(v){
+        if (window._need == null) {
+            let m = (this._timeInterval * 60000);
+            console.log('Agendamento ativado:', (m/1000), 'segundos');
+            if (!v) this.verifica();
+            window._need = setInterval( () =>
+                this.verifica()
+                    .catch( () => console.log('Rejeitou...') )
+            , m );
+        }
+    }
+
+    verifica(){
+        this._pend = 0;
+        return new Promise( (resolve, reject) => {
+            Promise.all([
+                new ApontamentoService()
+                    .listaSync()
+                    .then( apontamentos => {
+                        ++this._pend;
+                    })
+                //TODO: SE EXISTIR TRANSFERENCIAS, SOMAR ITENS A SINCRONIZAR.
+            ])
+            .then(() => {
+                if (this._pend == 0){
+                    this.inactive();
+                    resolve();
+                } else if (!window._need) {
+                    this.active(true);
+                }
+                if (window._need !== null){
+                    this.syncronize()
+                        .then( () => {
+                            console.log('Sincronização OK.');
+                            this.inactive();
+                            window.apontamentoController._screenRules();
+                            resolve();
+                        })
+                        .catch( () => {
+                            console.log('Falha.');
+                            reject();
+                        });
+                }
+            })
+            .catch(() => resolve());
+        })
+    }
+
+    syncronize(){
+        console.log('Tentando sincronizar...');
+        return new Promise( (resolve, reject) => {
+            Promise.all([
+                new BaseService()
+                    .sendApontamentos()
+                    .then( () => {
+                        new ApontamentoService().truncate();
+                    })
+            ])
+            .then( () => resolve() )
+            .catch( () => reject() )
+        });
+    }
+
+}
+
+class ApontamentoController {
+
+    constructor() {
+        this._inputData = $('#data');
+        this._listaApontamentos = null;
+        this._service = new ApontamentoService();
+        this._init();
+    }
+
+    _screenRules(){
+        this._listaApontamentos = new Bind(
+            new ListaApontamentos(),
+            new ApontamentosListView($('#apontamentosView')),
+            'adiciona'
+        );
+        this._service
+            .lista()
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) )
+            .catch( () => this.importaApontamentos() );
+    }
+
+    _init() {
+        window.syncController
+            .verifica()
+            .then( () => {
+                this._screenRules();
+            })
+            .catch( () => {
+                console.log('Rejeitou...')
+                this._screenRules();
+            });
+    }
+
+    adiciona(event) {
+        event.preventDefault();
+        this.insertApontamento(this._criaApontamento());
+        //this._mensagem.texto = 'Apontamento adicionado com sucesso';
+    }
+
+    insertApontamento(apontamento) {
+        this._service
+            .cadastra(apontamento)
+            .then( () => {
+                this._listaApontamentos.adiciona(apontamento);
+                this._limpaFormulario();
+        })
+        .catch(
+            //error => this._mensagem.texto = error
+        );
+    }
+
+    importaApontamentos() {
+        new BaseService()
+            .importarApontamentos(this._listaApontamentos.apontamentos)
+            .then( apontamentos => this.atualizaListaLocal(apontamentos) );
+    }
+
+    atualizaListaLocal(apontamentos) {
+        return apontamentos.forEach(apontamento =>
+            this._listaApontamentos.adiciona(apontamento));
+    }
+
+    _criaApontamento() {
+        return new Apontamento(
+            DateHelper.textoParaData(this._inputData.val())
+        )
+    }
+
+    _limpaFormulario(){
+        this._inputData.val('');
+        this._inputData.focus();
+    }
+
+    apaga() {
+        this._service
+            .apaga()
+            .then( mensagem => {
+                //this._mensagem.texto = mensagem;
+                this._listaApontamentos.esvazia();
+            })
+            //.catch(error => this._mensagem.texto = error);
+    }
+
+    updateApont(obj) {
+        if ( obj.val() != obj.attr('old')){
+            obj.attr('old',obj.val());
+            let service = new ApontamentoService();
+            service.recupera( obj.attr('apont') )
+                .then(apontamento => {
+                    let v = obj.val();
+                    if (obj.attr('what') == 'vo'){
+                        v = (v.replace(/[R\$ .,]/gi,'')*1)/100;
+                    } else {
+                        v *= 1;
+                    }
+                    service.update(apontamento.key, obj.attr('what'), v);
+                });
+        }
+    }
+
+    updateApontamento(obj) {
+        let service = new LogsService();
+        service.recupera( obj.attr('aluno'), window.classeID )
+            .then(log => service.updateLog( log.key, obj.attr('what'), obj.prop('checked') ))
+            .catch(() => service.cadastra(
+                new Log(
+                    obj.attr('aluno'),
+                    window.classeID,
+                    obj.parent().parent().parent().parent().find('h4').text(),
+                    obj.attr('what') == 'pr' ? obj.prop('checked') : false,
+                    obj.attr('what') == 'es' ? obj.prop('checked') : false )
+            ));
+    }
+
+    updateLista(apontID) {
+        BootstrapDialog.show({
+            title: 'ALERTA',
+            message: 'Após a confirmação, não será possível fazer alterações.<br/><br/>Confirma fechamento deste apontamento?',
+            type: BootstrapDialog.TYPE_WARNING,
+            size: BootstrapDialog.SIZE_SMALL,
+            draggable: true,
+            closable: true,
+            closeByBackdrop: false,
+            closeByKeyboard: false,
+            buttons: [
+                { label: 'N&atilde;o',
+                    cssClass: 'btn-success',
+                    action: function( dialogRef ){
+                        dialogRef.close();
+                    }
+                },
+                { label: 'Sim, desejo confirmar!',
+                    cssClass: 'btn-danger',
+                    autospin: true,
+                    action: function(dialogRef){
+                        dialogRef.enableButtons(false);
+                        dialogRef.setClosable(false);
+                        let service = new ApontamentoService();
+
+                        service
+                            .recupera( apontID )
+                            .then(apontamento => {
+                                new LogsService().contaPrEs(window.classeID)
+                                    .then( log => {
+                                        apontamento.value.es = log.es;
+                                        apontamento.value.pr = log.pr;
+                                        apontamento.value.fg = "1";
+                                        service.updateObj(apontamento)
+                                            .then( () => {
+                                                window.apontamentoController._init();
+                                                dialogRef.close();
+                                            });
+                                    });
+                            });
+                    }
+                }
+            ]
+        });
+    }
+
+}
 
 class MembrosController {
 
@@ -120,14 +357,11 @@ class MaestroController {
                 window.apontamentoController = new ApontamentoController();
             })
             .catch(error => {
-                Promise.all([
-                    instance.loadClasses()
-                ])
-                .then( () => instance._baseService.importarClasses(instance._listaClasses.classes) )
-                .then( () => instance.loadClasses() )
+                instance.loadClasses()
                 .then( () => instance.escolhe() )
-                .catch(error => {
-                    throw new Error(error);
+                .catch( () => {
+                    instance._baseService.importarClasses(instance._listaClasses.classes)
+                        .then( () => this.recuperaClasse() );
                 });
             });
     }
@@ -166,186 +400,6 @@ class MaestroController {
         );
 
         this.populaInformacoesdaClasse();
-    }
-
-}
-
-class ApontamentoController {
-
-    constructor() {
-        this._inputData = $('#data');
-        this._listaApontamentos = null;
-        this.syncNeeded = null;
-        this._service = new ApontamentoService();
-        this._init();
-    }
-
-    _init() {
-        this._listaApontamentos = new Bind(
-            new ListaApontamentos(),
-            new ApontamentosListView($('#apontamentosView')),
-            'adiciona'
-        );
-
-        this._service
-            .lista()
-            //.then( apontamentos => this.verificaSyncApontamentos(apontamentos) )
-            .then( apontamentos => this.atualizaListaLocal(apontamentos) )
-            .catch( () => this.importaApontamentos() );
-    }
-
-    adiciona(event) {
-        event.preventDefault();
-        this.insertApontamento(this._criaApontamento());
-        //this._mensagem.texto = 'Apontamento adicionado com sucesso';
-    }
-
-    insertApontamento(apontamento) {
-        this._service
-            .cadastra(apontamento)
-            .then( () => {
-                this._listaApontamentos.adiciona(apontamento);
-                this._limpaFormulario();
-        })
-        .catch(
-            //error => this._mensagem.texto = error
-        );
-    }
-
-    importaApontamentos() {
-        new BaseService()
-            .importarApontamentos(this._listaApontamentos.apontamentos)
-            .then( apontamentos => this.atualizaListaLocal(apontamentos) );
-    }
-
-    atualizaListaLocal(apontamentos) {
-        return apontamentos.forEach(apontamento => 
-            this._listaApontamentos.adiciona(apontamento));
-    }
-
-    verificaSyncApontamentos(apontamentos){
-        if (!this.syncNeeded && apontamentos.filter((e,i,a) => e.fg == "1").length > 0){
-            return this.sincronizaApontamentos(apontamentos)
-                .then( (apontamentos) => Promise.resolve(apontamentos) )
-                .catch( (apontamentos) => {
-                    console.log('Não deu certo, agendada para 5 min');
-                    this.syncNeeded = setInterval( () => 
-                        this.sincronizaApontamentos(apontamentos)
-                            .then( () => {
-                                console.log('Deu certo, agendamento encerrado.');
-                                clearInterval(this.syncNeeded);
-                                this.syncNeeded = null;
-                            })
-                            .catch( () =>  console.log('Não deu certo, agendada para 5 min') )
-                    , 300000 ) ;
-                    Promise.resolve(apontamentos);
-                });
-        } else {
-            return Promise.resolve(apontamentos);
-        }
-    }
-
-    sincronizaApontamentos(apontamentos){
-        console.log('Tentativa de sincronismo de apontamentos...');
-        return Promise.reject(apontamentos);
-    }
-
-    _criaApontamento() {
-        return new Apontamento(
-            DateHelper.textoParaData(this._inputData.val())
-        )
-    }
-
-    _limpaFormulario(){
-        this._inputData.val('');
-        this._inputData.focus();
-    }
-
-    apaga() {
-        this._service
-            .apaga()
-            .then( mensagem => {
-                //this._mensagem.texto = mensagem;
-                this._listaApontamentos.esvazia();
-            })
-            //.catch(error => this._mensagem.texto = error);
-    }
-
-    updateApont(obj) {
-        if ( obj.val() != obj.attr('old')){
-            obj.attr('old',obj.val());
-            let service = new ApontamentoService();
-            service.recupera( obj.attr('apont') )
-                .then(apontamento => {
-                    let v = obj.val();
-                    if (obj.attr('what') == 'vo'){
-                        v = (v.replace(/[R\$ .,]/gi,'')*1)/100;
-                    } else {
-                        v *= 1;
-                    }
-                    service.update(apontamento.key, obj.attr('what'), v);
-                });
-        }
-    }
-
-    updateApontamento(obj) {
-        let service = new LogsService();
-        service.recupera( obj.attr('aluno'), window.classeID )
-            .then(log => service.updateLog( log.key, obj.attr('what'), obj.prop('checked') ))
-            .catch(() => service.cadastra(
-                new Log(
-                    obj.attr('aluno'),
-                    window.classeID,
-                    obj.parent().parent().parent().parent().find('h4').text(),
-                    obj.attr('what') == 'pr' ? obj.prop('checked') : false,
-                    obj.attr('what') == 'es' ? obj.prop('checked') : false )
-            ));
-    }
-
-    updateLista(apontID) {
-        BootstrapDialog.show({
-            title: 'ALERTA',
-            message: 'Após a confirmação, não será possível fazer alterações.<br/><br/>Confirma fechamento deste apontamento?',
-            type: BootstrapDialog.TYPE_WARNING,
-            size: BootstrapDialog.SIZE_SMALL,
-            draggable: true,
-            closable: true,
-            closeByBackdrop: false,
-            closeByKeyboard: false,
-            buttons: [
-                { label: 'N&atilde;o',
-                    cssClass: 'btn-success',
-                    action: function( dialogRef ){
-                        dialogRef.close();
-                    }
-                },
-                { label: 'Sim, desejo confirmar!',
-                    cssClass: 'btn-danger',
-                    autospin: true,
-                    action: function(dialogRef){
-                        dialogRef.enableButtons(false);
-                        dialogRef.setClosable(false);
-                        let service = new ApontamentoService();
-
-                        service
-                            .recupera( apontID )
-                            .then(apontamento => {
-                                new LogsService().contaPrEs(window.classeID)
-                                    .then( log => {
-                                        apontamento.value.es = log.es;
-                                        apontamento.value.pr = log.pr;
-                                        apontamento.value.fg = "1";
-                                        service.updateObj(apontamento)
-                                            .then( () => {
-                                                window.apontamentoController._init();
-                                                dialogRef.close();
-                                            });
-                                    });
-                            });
-                    }
-                }
-            ]
-        });
     }
 
 }

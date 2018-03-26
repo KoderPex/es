@@ -20,9 +20,9 @@ class DAO {
 
     clear(){
         return this._connection
-                .transaction([this._store],'readwrite')
-                .objectStore(this._store)
-                .clear();
+            .transaction([this._store],'readwrite')
+            .objectStore(this._store)
+            .clear();
     }
 
     atualiza(index,what,value){
@@ -209,6 +209,8 @@ class ClasseDAO extends DAO {
                 if (atual) {
                     classes.push( ClasseDAO.instance(atual.value) );
                     atual.continue();
+                } else if (classes.length == 0) {
+                    reject(classes);
                 } else {
                     resolve(classes);
                 }
@@ -296,15 +298,19 @@ class ApontamentoDAO extends DAO {
         //};
     }
 
-    listaTodos() {
+    listaTodos(selection) {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
             let apontamentos = [];
+            let add = false
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    apontamentos.push( ApontamentoDAO.instance(atual.value) );
+                    add = (!selection || (selection && atual.value[selection.field] == selection.value));
+                    if (add){
+                        apontamentos.push( ApontamentoDAO.instance(atual.value) );
+                    }
                     atual.continue();
                 } else if (apontamentos.length == 0) {
                     reject();

@@ -51,4 +51,5 @@ $(function(){
     window.maestroController = new MaestroController();
     window.apontamentoController = null;
     window.membrosController = null;
+    window.syncController = new SyncController();
 });
