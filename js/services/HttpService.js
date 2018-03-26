@@ -1,8 +1,11 @@
 class HttpService {
 
     _handleErrors(res) {
-        if (!res.ok) throw new Error(res.statusText);
-        return res;
+        if (res.type === 'opaque' || res.ok) {
+            return res;
+        } else {
+            throw new Error(res.statusText);
+        }
     }
 
     get(url,data) {
@@ -10,9 +13,7 @@ class HttpService {
                 body: JSON.stringify(data),
                 mode:"cors",
                 cache: 'no-cache',
-                headers: {
-                  "Content-type": "application/x-www-form-urlencoded; charset=UTF-8"
-                },
+                headers: {"Content-type": "application/x-www-form-urlencoded; charset=UTF-8"},
             })
             .then(res => this._handleErrors(res))
             .then(res => res.json());
@@ -20,8 +21,12 @@ class HttpService {
 
     post(url, data) {
         return fetch(url, {
-                headers: {'Content-type': 'application/json'},
-                method: 'post',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'POST',
+                mode: 'no-cors',
                 body: JSON.stringify(data)
             })
             .then(res => this._handleErrors(res));

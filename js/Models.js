@@ -4,6 +4,7 @@ class Nome {
         this._id = id;
         this._ic = ic;
         this._nm = nm;
+        this._ns = false;
     }
 
     get id() {
@@ -16,6 +17,15 @@ class Nome {
 
     get nm() {
         return this._nm;
+    }
+
+    get ns(){
+        return this._ns;
+    }
+
+    set ns(_ns){
+        this._ns = _ns;
+        return this;
     }
 
     isEquals(outro) {
@@ -121,7 +131,7 @@ class Classe {
         return this._sq;
     }
 
-    isEquals(outraClasse) {        
+    isEquals(outraClasse) {
         return (this._id == outraClasse.id);
     }
 }

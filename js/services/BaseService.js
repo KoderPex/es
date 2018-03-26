@@ -109,5 +109,20 @@ class BaseService {
             });
     }
 
+    sendApontamentos(){
+        return new Promise( (resolve, reject) => {
+            new ApontamentoService()
+                .listaSync()
+                .then( apontamentos => {
+                    this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos )
+                        .then( () => resolve() )
+                        .catch( () => reject() );
+                })
+                .catch( () => Promise.reject() );
+        })
+    }
+
+    sendTransferencias(){
+    }
 
 }

@@ -20,9 +20,9 @@ class DAO {
 
     clear(){
         return this._connection
-                .transaction([this._store],'readwrite')
-                .objectStore(this._store)
-                .clear();
+            .transaction([this._store],'readwrite')
+            .objectStore(this._store)
+            .clear();
     }
 
     atualiza(index,what,value){
@@ -209,6 +209,8 @@ class ClasseDAO extends DAO {
                 if (atual) {
                     classes.push( ClasseDAO.instance(atual.value) );
                     atual.continue();
+                } else if (classes.length == 0) {
+                    reject(classes);
                 } else {
                     resolve(classes);
                 }
