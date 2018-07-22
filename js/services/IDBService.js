@@ -52,7 +52,6 @@ class ApontamentoService {
             .then(dao => dao.recupera(id));
     }
 
-
     truncate(){
         this.daoFactory
             .then(dao => dao.clear());
@@ -195,6 +194,16 @@ class LogsService {
     contaPrEs(ic) {
         return this.daoFactory
             .then(dao => dao.contaPrEs(ic));
+    }
+
+    lista() {
+        return this.daoFactory
+            .then(dao => dao.listaTodos());
+   }
+
+   truncate(){
+        this.daoFactory
+            .then(dao => dao.clear());
     }
 
 }

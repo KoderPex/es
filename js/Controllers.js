@@ -21,11 +21,11 @@ class SyncController {
             let m = (this._timeInterval * 60000);
             console.log('Agendamento ativado:', (m/1000), 'segundos');
             if (!v) this.verifica();
-            window._need = setInterval( () =>
+            window._need = setInterval(() =>
                 this.verifica()
-                    .then( () => window.apontamentoController._screenRules() )
-                    .catch( () => console.log('Rejeitou...') )
-            , m );
+                    .then(() => window.apontamentoController._screenRules())
+                    .catch(() => console.log('Rejeitou...'))
+            , m);
         }
     }
 
@@ -35,9 +35,15 @@ class SyncController {
             Promise.all([
                 new ApontamentoService()
                     .listaSync()
-                    .then(apontamentos => ++this._pend)
+                    .then(() => ++this._pend)
+                    .catch(() => this.pend),
+                new LogsService()
+                    .lista()
+                    .then(() => ++this._pend)
+                    .catch(() => this.pend)
             ])
             .then(() => {
+                console.log({pend: this._pend})
                 if (this._pend == 0){
                     this.inactive();
                     resolve();
@@ -46,34 +52,33 @@ class SyncController {
                 }
                 if (window._need !== null){
                     this.syncronize()
-                        .then( () => {
+                        .then(() => {
                             console.log('Sincronização OK.');
                             this.inactive();
                             resolve();
                         })
-                        .catch( () => {
+                        .catch(() => {
                             console.log('Falha.');
                             reject();
                         });
                 }
             })
-            .catch(() => resolve());
+            .catch(() => this._pend > 0 ? reject() : resolve());
         })
     }
 
     syncronize(){
         console.log('Tentando sincronizar...');
         return new Promise( (resolve, reject) => {
-            Promise.all([
-                new BaseService()
-                    .sendApontamentos()
-                    .then( () => {
-                        new ApontamentoService().truncate();
-                    })
-            ])
-            .then( () => resolve() )
-            .catch( () => reject() )
-        });
+            new BaseService()
+                .sendTransferencias()
+                .then(() => {
+                    new ApontamentoService().truncate();
+                    new LogService().truncate();
+                    resolve();
+                })
+                .catch( () => reject() )
+            });
     }
 
 }

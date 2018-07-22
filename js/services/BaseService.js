@@ -72,14 +72,14 @@ class BaseService {
         });
     }
 
-   obterClasses() {
-        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/classes/')
-            .then(classes => classes.map(o => ClasseDAO.instance(o)))
-            .catch(error => {
-                console.log(error);
-                throw new Error('Não foi possível obter a base');
-            });
-   }
+    obterClasses() {
+            return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/classes/')
+                .then(classes => classes.map(o => ClasseDAO.instance(o)))
+                .catch(error => {
+                    console.log(error);
+                    throw new Error('Não foi possível obter a base');
+                });
+    }
 
     insertApontamentos(apontamentos){
         return new Promise((resolve, reject) => {
@@ -104,7 +104,7 @@ class BaseService {
                 .catch( error => console.log(error) );
     }
 
-   obterApontamentos() {
+    obterApontamentos() {
         return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/?id='+window.whoAmI.id)
             .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
             .catch(error => {
@@ -114,19 +114,31 @@ class BaseService {
     }
 
     sendApontamentos(){
-        return new Promise( (resolve, reject) => {
-            new ApontamentoService()
-                .listaSync()
-                .then(apontamentos => {
-                    this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos )
-                        .then( () => resolve() )
-                        .catch( () => reject() );
-                })
-                .catch( () => Promise.reject() );
-        })
+        return new Promise((resolve, reject) => new ApontamentoService()
+            .listaSync()
+            .catch(() => resolve())
+            .then(apontamentos => 
+                this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos )
+                    .then(() => resolve())
+                    .catch(() => reject())
+            )
+        );
     }
 
+    sendLogs(){
+        return new Promise((resolve, reject) => new LogsService()
+            .lista()
+            .catch(() => resolve())
+            .then(logs => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/logs/', logs)
+                    .then(() => resolve())
+                    .catch(() => reject())
+            )
+        ); 
+    };
+
     sendTransferencias(){
+        return this.sendApontamentos()
+            .then(() => this.sendLogs());
     }
 
 }

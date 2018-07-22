@@ -144,6 +144,29 @@ class LogsDAO extends DAO {
 
     }
 
+    listaTodos(selection) {
+        return new Promise((resolve,reject) => {
+            let cursor = this.store.openCursor();
+
+            let logs = [];
+            let add = false
+            cursor.onsuccess = e => {
+                let atual = e.target.result;
+                if (atual) {
+                    add = (!selection || (selection && atual.value[selection.field] == selection.value));
+                    if (add){
+                        logs.push( LogsDAO.instance(atual.value) );
+                    }
+                    atual.continue();
+                } else if (logs.length == 0) {
+                    reject();
+                } else {
+                    resolve(logs);
+                }
+            };
+        });
+    }
+
 }
 
 class NomeDAO extends DAO {
