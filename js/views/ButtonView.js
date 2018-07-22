@@ -1,6 +1,3 @@
-//import {View} from './View';
-//import {currentInstance} from '../controllers/ApontamentoController';
-
 class ButtonView extends View {
 
     constructor(elemento){

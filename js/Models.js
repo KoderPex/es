@@ -1,10 +1,10 @@
 class Nome {
 
-    constructor(id,ic,nm) {
+    constructor(id,ic,nm,ns) {
         this._id = id;
         this._ic = ic;
         this._nm = nm;
-        this._ns = false;
+        this._ns = !!ns;
     }
 
     get id() {
@@ -33,6 +33,28 @@ class Nome {
     }
 }
 
+
+class ListaMembros {
+
+    constructor() {
+        this._membros = [];
+    }
+
+    adiciona(membro) {
+        this._membros.push(membro);
+        return this;
+    }
+
+    get membros() {
+        return [].concat(this._membros);
+    }
+
+    esvazia() {
+        this._membros = [];
+        return this;
+    }
+}
+
 class ListaNomes {
 
     constructor() {
@@ -56,8 +78,8 @@ class ListaNomes {
 
 class Log extends Nome {
 
-    constructor(id,ic,nm,pr,es) {
-        super(id,ic,nm);
+    constructor(id,ic,nm,ns,pr,es) {
+        super(id,ic,nm,ns);
         this._pr = pr;
         this._es = es;
         Object.freeze(this); //isFrozen()

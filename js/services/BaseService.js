@@ -101,7 +101,7 @@ class BaseService {
     }
 
    obterApontamentos() {
-        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/?id='+window.classeID)
+        return this._http.get('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/?id='+window.whoAmI.id)
             .then(apontamentos => apontamentos.map(o => ApontamentoDAO.instance(o)))
             .catch(error => {
                 console.log(error);
@@ -113,7 +113,7 @@ class BaseService {
         return new Promise( (resolve, reject) => {
             new ApontamentoService()
                 .listaSync()
-                .then( apontamentos => {
+                .then(apontamentos => {
                     this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos )
                         .then( () => resolve() )
                         .catch( () => reject() );

@@ -1,7 +1,3 @@
-//import {View} from './View';
-//import {DateHelper} from '../helpers/DateHelper';
-//import {currentInstance} from '../controllers/ApontamentoController';
-
 class ApontamentosListView extends View {
 
     constructor(elemento){

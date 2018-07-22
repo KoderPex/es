@@ -38,6 +38,7 @@
     <script src="js/views/ButtonView.js"></script>
     <script src="js/views/ApontamentosListView.js"></script>
     <script src="js/views/ApontamentosNomesListView.js"></script>
+    <script src="js/views/MembrosListView.js"></script>
 
     <script src="js/Controllers.js"></script>
 
@@ -54,11 +55,14 @@
                         <li role="presentation" class="active">
                             <a href="#liTabApontamentos" data-toggle="tab">
                                 <i class="material-icons">event_note</i> APONTAMENTOS
+                                <span class="badge bg-red" style="border-radius:6px;vertical-align:top;display:none" id="spanTodo"></span>
+                                <span class="badge bg-orange" style="border-radius:6px;vertical-align:top;display:none" id="spanSync"></span>
                             </a>
                         </li>
                         <li role="presentation">
                             <a href="#liTabMembros" data-toggle="tab">
                                 <i class="material-icons">transfer_within_a_station</i> MEMBROS
+                                <span class="badge bg-green" style="border-radius:6px;vertical-align:top;display:none" id="spanPlus"></span>
                             </a>
                         </li>
                     </ul>
@@ -67,7 +71,7 @@
                             <div id="apontamentosView"></div>
                         </div>
                         <div role="tabpanel" class="tab-pane fade" id="liTabMembros">
-                            <div id="inputMembrosView"></div>
+                            <div id="membrosView"></div>
                         </div>
                     </div>
                 </div>

@@ -90,6 +90,7 @@ class LogsDAO extends DAO {
             o._id,
             o._ic,
             o._nm,
+            o._ns,
             o._pr,
             o._es
         );
@@ -155,11 +156,12 @@ class NomeDAO extends DAO {
         return new Nome(
             o._id,
             o._ic,
-            o._nm
+            o._nm,
+            o._ns
         );
     }
 
-    recupera(classeID = null) {
+    recupera(whoAmIId = null) {
         return new Promise((resolve,reject) => {
             let cursor = this.store.openCursor();
 
@@ -167,7 +169,7 @@ class NomeDAO extends DAO {
             cursor.onsuccess = e => {
                 let atual = e.target.result;
                 if (atual) {
-                    if ( classeID == null || atual.value._ic == classeID ) {
+                    if ( whoAmIId == null || atual.value._ic == whoAmIId ) {
                         nomes.push( NomeDAO.instance(atual.value) );
                     }
                     atual.continue();

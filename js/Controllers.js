@@ -35,10 +35,7 @@ class SyncController {
             Promise.all([
                 new ApontamentoService()
                     .listaSync()
-                    .then( apontamentos => {
-                        ++this._pend;
-                    })
-                //TODO: SE EXISTIR TRANSFERENCIAS, SOMAR ITENS A SINCRONIZAR.
+                    .then(apontamentos => ++this._pend)
             ])
             .then(() => {
                 if (this._pend == 0){
@@ -138,9 +135,18 @@ class ApontamentoController {
             .then( apontamentos => this.atualizaListaLocal(apontamentos) );
     }
 
+    _atualizaSpanPlus() {
+        const sync = this._listaApontamentos._apontamentos.filter( (e,i,a) => e._fg === '1');
+        $("#spanSync").text(`${sync.length}`).visible(sync.length>0);
+        const todo = this._listaApontamentos._apontamentos.filter( (e,i,a) => e._fg === '0');
+        $("#spanTodo").text(`${todo.length}`).visible(todo.length>0);
+    }
+
     atualizaListaLocal(apontamentos) {
-        return apontamentos.forEach(apontamento =>
+        const lista = apontamentos.forEach(apontamento =>
             this._listaApontamentos.adiciona(apontamento));
+        this._atualizaSpanPlus();
+        return lista;
     }
 
     _criaApontamento() {
@@ -158,10 +164,8 @@ class ApontamentoController {
         this._service
             .apaga()
             .then( mensagem => {
-                //this._mensagem.texto = mensagem;
                 this._listaApontamentos.esvazia();
-            })
-            //.catch(error => this._mensagem.texto = error);
+            });
     }
 
     updateApont(obj) {
@@ -183,13 +187,14 @@ class ApontamentoController {
 
     updateApontamento(obj) {
         let service = new LogsService();
-        service.recupera( obj.attr('aluno'), window.classeID )
+        service.recupera( obj.attr('aluno'), window.whoAmI.id )
             .then(log => service.updateLog( log.key, obj.attr('what'), obj.prop('checked') ))
             .catch(() => service.cadastra(
                 new Log(
                     obj.attr('aluno'),
-                    window.classeID,
+                    window.whoAmI.id,
                     obj.parent().parent().parent().parent().find('h4').text(),
+                    undefined,
                     obj.attr('what') == 'pr' ? obj.prop('checked') : false,
                     obj.attr('what') == 'es' ? obj.prop('checked') : false )
             ));
@@ -223,7 +228,7 @@ class ApontamentoController {
                         service
                             .recupera( apontID )
                             .then(apontamento => {
-                                new LogsService().contaPrEs(window.classeID)
+                                new LogsService().contaPrEs(window.whoAmI.id)
                                     .then( log => {
                                         apontamento.value.es = log.es;
                                         apontamento.value.pr = log.pr;
@@ -252,6 +257,12 @@ class MembrosController {
             'adiciona'
         );
 
+        this._listaMembros = new Bind(
+            new ListaMembros(),
+            new MembrosListView($('#membrosView')),
+            'adiciona'
+        );
+
         this._service = new NomesService();
         this._logsService = new LogsService();
 
@@ -261,22 +272,93 @@ class MembrosController {
     _init() {
         let instance = this;
         instance._service
-            .lista(window.classeID)
+            .lista(window.whoAmI.id)
             .then(nomes => instance.atualizaListaLocal(nomes))
-            .catch(error => {
-                console.log(error);
-                //this._mensagem.texto = error;
-            });
+            .catch(error => console.log(error));
+    }
+
+    _atualizaSpanPlus() {
+        const names = this._listaMembros._membros.filter( (e,i,a) => e._ns === true);
+        $("#spanPlus").text(`${names.length}`).visible(names.length>0);
     }
 
     atualizaListaLocal(nomes) {
         let instance = this;
         nomes.forEach(n => {
-            instance._logsService.recupera(n.id, window.classeID)
+            instance._logsService.recupera(n.id, window.whoAmI.id)
                 .then( log => instance._listaLogs.adiciona( log.value ) )
-                .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,false,false) ) )
+                .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,n.ns,false) ) )
         });
+        const fieldSorter = (fields) => (a, b) => fields.map(o => {
+            let dir = 1;
+            if (o[0] === '-') { dir = -1; o=o.substring(1); }
+            return a[o] > b[o] ? dir : a[o] < b[o] ? -(dir) : 0;
+        }).reduce((p, n) => p ? p : n, 0);
+        nomes.sort(fieldSorter(['-ns','nm'])).forEach(n => instance._listaMembros.adiciona( n ));
+        instance._atualizaSpanPlus();
     }
+
+    transfereMembro(obj) {
+        if (obj.ns){
+            console.log('set nomes(ns)=false and logs(ns)=false', obj);
+            return;
+        }
+        BootstrapDialog.show({
+            title: 'ALERTA',
+            message: dialogRef => {
+                var $message = $(`<p>Confirma transferência de <b>${obj.nm}</b> para a sala abaixo indicada?</p>`);
+                var $select = $(`
+                <select id="cmbClassID" class="form-control show-tick" data-live-search="true" data-show-subtext="true" tabindex="-98">
+                    <option></option>
+                </select>
+                `);
+                $message.append($select);
+                return $message;
+            },
+            onshown: () => $("#cmbClassID").selectpicker(),
+            type: BootstrapDialog.TYPE_DANGER,
+            size: BootstrapDialog.SIZE_NORMAL,
+            draggable: true,
+            closable: true,
+            closeByBackdrop: false,
+            closeByKeyboard: false,
+            buttons: [
+                { label: 'N&atilde;o',
+                    cssClass: 'btn-success',
+                    action: function( dialogRef ){
+                        dialogRef.close();
+                    }
+                },
+                { label: 'Sim, desejo confirmar!',
+                    cssClass: 'btn-danger',
+                    autospin: true,
+                    action: function(dialogRef){
+                        dialogRef.enableButtons(false);
+                        dialogRef.setClosable(false);
+                        let service = new ApontamentoService();
+
+                        service
+                            .recupera( apontID )
+                            .then(apontamento => {
+                                new LogsService().contaPrEs(window.whoAmI.id)
+                                    .then( log => {
+                                        apontamento.value.es = log.es;
+                                        apontamento.value.pr = log.pr;
+                                        apontamento.value.fg = "1";
+                                        service.updateObj(apontamento)
+                                            .then( () => {
+                                                window.apontamentoController._init();
+                                                dialogRef.close();
+                                            });
+                                    });
+                            });
+                    }
+                }
+            ]
+        });
+        console.log(obj);
+    };
+
 }
 
 class MaestroController {
@@ -299,31 +381,11 @@ class MaestroController {
             this.iniciaInformacoesdaClasse()
         ])
         .then( () => this.recuperaClasse() );
-
-        //01 - SE BASE (local) NAO EXISTE, PRECISA CRIAR.
-        //  AO CRIAR A BASE (local), GRAVAR NA ESTRUTURA whoami, AS INFORMACOES DA CLASSE.
-        //  AO CLICAR NO BOTAO REDEFINIR CLASSE, APAGAR AS INFORMACOES DE whoami.
-
-        //02 - SE BASE (local) NAO EXISTE, PRECISA IMPORTAR AS INFORMACOES DE ACORDOM COM whoami.
-        //  TENTAR SE CONECTAR PARA BAIXAR.
-        //  SE NAO CONSEGUIU BAIXAR, PROGRAMA TENTATIVA PARA 1:30.
-        //  VERIFICA SE TODAS AS CLASSES SUBMETERAM AS ATUALIZACOES (host).
-        //  SE HA CLASSES A SUBMETER, PROGRAMA TENTATIVA PARA 1:30.
-        //  SE TODAS AS CLASSES ATUALIZADAS (host), MARCA CLASSE ATUALIZADA, RE-CRIA BANCO (local).
-
-        //03 - SE BASE (local) EXISTE, VERIFICAR SE PRECISA ENVIAR (host) APONTAMENTOS FECHADOS.
-        //  TENTAR SE CONECTAR (host) PARA ENVIAR.
-        //  SE NAO CONSEGUIU ENVIAR, PROGRAMA TENTATIVA PARA OS PROXIMOS 5:00.
-        //  SE CONSEGUIR ENVIAR, APAGA A BASE (local) DE CLASSES/PESSOAS/APONTAMENTOS, E VOLTA PARA O PASSO 1.
-
-        //FLAGS
-        //0 - EM ABERTO
-        //1 - PRONTO PARA ENVIO
-        //2 - ATUALIZADO
-
-        //setInterval( () => this.importaApontamentos(), 10000);
-        //setTimeout( () => this.recuperaClasse(), 5000);
     }
+
+    classes () {
+        return this._listaClasses._classes;
+    } 
 
     loadClasses() {
         let instance = this;
@@ -373,6 +435,7 @@ class MaestroController {
     populaInformacoesdaClasse(){
         $("#liTabClasse").hide();
         $("#divHeaderClasse, #divTabs").show();
+        $('#inputClasseView').hide();
     }
 
     escolhe(){
@@ -389,15 +452,15 @@ class MaestroController {
     }
 
     mostraClasse(whoAmI){
-        this._listaClasses.esvazia();
+        window.whoAmI = whoAmI;
 
-        window.classeID = whoAmI.id;
-
-        this._listaClasses = new Bind(
+        this._header = new Bind(
             new ListaClasses().adiciona(whoAmI),
             new HeaderClassView( $('#divHeaderClasse')),
             'adiciona'
         );
+
+        window.membrosController = new MembrosController();
 
         this.populaInformacoesdaClasse();
     }

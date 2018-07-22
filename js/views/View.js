@@ -22,6 +22,9 @@ class View {
         $('.panel.panel-danger').unbind('show.bs.collapse').on('show.bs.collapse', function (e) {
             window.membrosController = new MembrosController();
         });
+        $("[aluno-transf]").unbind('click').on('click', function(e){
+            window.membrosController.transfereMembro( { ...JSON.parse($(this).attr('aluno-transf')), nm: $(this).parent().find("label").text() } );
+        });
         $('.switch>label>input').unbind('change').on('change', function (e) {
             window.apontamentoController.updateApontamento( $(this) );
         });

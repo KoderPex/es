@@ -1,7 +1,3 @@
-//import {View} from './View';
-//import {DateHelper} from '../helpers/DateHelper';
-//import {currentInstance} from '../controllers/ApontamentoController';
-
 class InputClassView extends View {
 
     constructor(elemento){
@@ -9,7 +5,7 @@ class InputClassView extends View {
     }
 
     template(model) {
-        return model.classes.length > 0
+        return model && model.classes.length > 0
          ? `
             <div class="col-md-12">
                 <div class="form-group">

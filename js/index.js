@@ -47,7 +47,7 @@ $(function(){
         }
 	});
 
-	window.classeID = null;
+	window.whoAmI = null;
     window.maestroController = new MaestroController();
     window.apontamentoController = null;
     window.membrosController = null;

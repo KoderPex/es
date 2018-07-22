@@ -103,14 +103,9 @@ class NomesService {
             .then(connection => new NomeDAO(connection));
     }
 
-    lista(classeID = null) {
+    lista(whoAmIId = null) {
         return this.daoFactory
-            .then(dao => dao.recupera(classeID));
-    }
-
-    listaSync() {
-         return this.daoFactory
-             .then(dao => dao.listaTodos({field:'_ns', value: true}));
+            .then(dao => dao.recupera(whoAmIId));
     }
 
 }
