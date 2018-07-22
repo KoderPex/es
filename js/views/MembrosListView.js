@@ -6,8 +6,8 @@ class MembrosListView extends View {
 
     card(color,l){
         const buttonContent = l.ns 
-            ? `<button type="button" class="btn btn-success pull-right" aluno-transf='{"id":${l.id},"ns":${l.ns}}' style="width:120px;"><i class="material-icons">mood</i><span>Receber</span></button>`
-            : `<button type="button" class="btn btn-danger pull-right" aluno-transf='{"id":${l.id},"ns":${l.ns}}' style="width:120px;"><i class="material-icons">mood_bad</i><span>Transferir</span></button>`;
+            ? `<button type="button" class="btn btn-success pull-right" aluno-transf='{"id":${l.id},"ns":${l.ns}}' style="width:140px;"><i class="material-icons">mood</i><span>RECEBER</span></button>`
+            : `<button type="button" class="btn btn-danger pull-right" aluno-transf='{"id":${l.id},"ns":${l.ns}}' style="width:140px;"><i class="material-icons">mood_bad</i><span>TRANSFERIR</span></button>`;
         return `
         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin:0px;margin-bottom:-20px">
             <div class="info-box-2">

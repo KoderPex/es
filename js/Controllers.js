@@ -185,6 +185,21 @@ class ApontamentoController {
         }
     }
 
+    updateTransf(obj) {
+        let service = new LogsService();
+        return service.recupera( obj.id, window.whoAmI.id )
+            .then(log => service.updateLog( log.key, 'ns', false ))
+            .catch(() => service.cadastra(
+                new Log(
+                    obj.id,
+                    window.whoAmI.id,
+                    obj.nm,
+                    false,
+                    false,
+                    false )
+            ));
+    }
+
     updateApontamento(obj) {
         let service = new LogsService();
         service.recupera( obj.attr('aluno'), window.whoAmI.id )
@@ -257,12 +272,6 @@ class MembrosController {
             'adiciona'
         );
 
-        this._listaMembros = new Bind(
-            new ListaMembros(),
-            new MembrosListView($('#membrosView')),
-            'adiciona'
-        );
-
         this._service = new NomesService();
         this._logsService = new LogsService();
 
@@ -278,7 +287,7 @@ class MembrosController {
     }
 
     _atualizaSpanPlus() {
-        const names = this._listaMembros._membros.filter( (e,i,a) => e._ns === true);
+        const names = window.maestroController._listaMembros.membros.filter( (e,i,a) => e._ns === true);
         $("#spanPlus").text(`${names.length}`).visible(names.length>0);
     }
 
@@ -289,29 +298,30 @@ class MembrosController {
                 .then( log => instance._listaLogs.adiciona( log.value ) )
                 .catch( () => instance._listaLogs.adiciona( new Log(n.id,n.ic,n.nm,n.ns,false) ) )
         });
-        const fieldSorter = (fields) => (a, b) => fields.map(o => {
-            let dir = 1;
-            if (o[0] === '-') { dir = -1; o=o.substring(1); }
-            return a[o] > b[o] ? dir : a[o] < b[o] ? -(dir) : 0;
-        }).reduce((p, n) => p ? p : n, 0);
-        nomes.sort(fieldSorter(['-ns','nm'])).forEach(n => instance._listaMembros.adiciona( n ));
-        instance._atualizaSpanPlus();
     }
 
     transfereMembro(obj) {
         if (obj.ns){
-            console.log('set nomes(ns)=false and logs(ns)=false', obj);
+            window.apontamentoController.updateTransf(obj)
+            .then(() => this._service.aceitarTransferencia(obj.id))
+            .then(() => {
+                window.maestroController._listaMembros.esvazia();
+                return window.maestroController.recuperaNomes(window.whoAmI)
+            })
+            .then(() => {
+                window.membrosController = new MembrosController();
+            });
             return;
         }
         BootstrapDialog.show({
             title: 'ALERTA',
             message: dialogRef => {
                 var $message = $(`<p>Confirma transferência de <b>${obj.nm}</b> para a sala abaixo indicada?</p>`);
-                var $select = $(`
-                <select id="cmbClassID" class="form-control show-tick" data-live-search="true" data-show-subtext="true" tabindex="-98">
+                var $select = 
+                $(`<select id="cmbClassID" class="form-control show-tick" data-live-search="true" data-show-subtext="true" tabindex="-98">
                     <option></option>
-                </select>
-                `);
+                    ${new View().comboClasses()}
+                </select>`);
                 $message.append($select);
                 return $message;
             },
@@ -356,7 +366,6 @@ class MembrosController {
                 }
             ]
         });
-        console.log(obj);
     };
 
 }
@@ -368,6 +377,12 @@ class MaestroController {
             new ListaClasses(),
             new InputClassView($('#inputClasseView')),
             'adiciona','esvazia'
+        );
+
+        this._listaMembros = new Bind(
+            new ListaMembros(),
+            new MembrosListView($('#membrosView')),
+            'adiciona'
         );
         this._classeService = new ClasseService();
         this._whoAmIService = new WhoAmIService();
@@ -383,9 +398,9 @@ class MaestroController {
         .then( () => this.recuperaClasse() );
     }
 
-    classes () {
+    classes() {
         return this._listaClasses._classes;
-    } 
+    }
 
     loadClasses() {
         let instance = this;
@@ -397,34 +412,38 @@ class MaestroController {
             });
     }
 
-    recuperaNomes(whoami) {
+    recuperaNomes(whoAmI) {
         let instance = this;
-        instance._nomesService.lista(whoami._id)
-            .catch(error => {
-                Promise.all([
-                    this._baseService.importarAlunos()
-                ])
-                .catch(error => {
-                    throw new Error(error);
-                });
+        return instance._nomesService
+            .lista(whoAmI.id)
+            .then(nomes => {
+                const fieldSorter = (fields) => (a, b) => fields.map(o => {
+                    let dir = 1;
+                    if (o[0] === '-') { dir = -1; o=o.substring(1); }
+                    return a[o] > b[o] ? dir : a[o] < b[o] ? -(dir) : 0;
+                }).reduce((p, n) => p ? p : n, 0);
+                nomes.sort(fieldSorter(['-ns','nm'])).forEach(n => instance._listaMembros.adiciona( n ));
+                window.membrosController._atualizaSpanPlus();
             });
     }
 
-    recuperaClasse(){
+    recuperaClasse(loadClasse = true){
         let instance = this;
         instance._whoAmIService.verifica()
-            .then( whoami => {
+            .then(whoami => {
                 instance.recuperaNomes(whoami);
                 instance.mostraClasse(whoami);
+                if (loadClasse) instance.loadClasses();
                 window.apontamentoController = new ApontamentoController();
             })
             .catch(error => {
                 instance.loadClasses()
-                .then( () => instance.escolhe() )
-                .catch( () => {
-                    instance._baseService.importarClasses(instance._listaClasses.classes)
-                        .then( () => this.recuperaClasse() );
-                });
+                    .then( () => instance.escolhe() )
+                    .catch( () => {
+                        instance._baseService.importarAlunos(instance._listaMembros.membros)
+                        instance._baseService.importarClasses(instance._listaClasses.classes)
+                            .then( () => this.recuperaClasse(false) );
+                    });
             });
     }
 
@@ -447,7 +466,7 @@ class MaestroController {
             instance._classeService.getClasseByID( $("#cmbWhoAmI").selectpicker('val') )
                 .then( classe =>
                     instance._whoAmIService.cadastra( classe )
-                        .then( () => instance.recuperaClasse() ));
+                        .then( () => instance.recuperaClasse(false) ));
         });
     }
 

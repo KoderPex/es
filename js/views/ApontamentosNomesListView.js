@@ -35,9 +35,7 @@ class ApontamentosNomesListView extends View {
     template(model) {
         return `
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-                ${model.logs.map(l => {
-                    return `${this.card('col-red','person',l)}`
-                }).join('')}
+                ${model.logs.filter(e => !e.ns).map(l => `${this.card('col-red','person',l)}`).join('')}
             </div>
             `
            ;

@@ -15,6 +15,12 @@ class View {
         return this;
     }
 
+    comboClasses() {
+        return window.maestroController.classes()
+            .filter(e => e.id !== window.whoAmI.id)
+            .map(n => `<option data-subtext="(${n.pb} | ${n.pr} PERÍODO | ${n.cd})" value="${n.id}">CLASSE ${("00"+n.sq).slice(-2)} - ${n.ds}</option>`).join('')
+    }
+
     updateInjectedObjects(){
         $('.date').inputmask('dd/mm/yyyy', { placeholder: '__/__/____' });
         $('select:not(.ms)').selectpicker();

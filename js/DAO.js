@@ -53,7 +53,7 @@ class DAO {
                 var objRequest = this.store.put(obj.value, obj.key);
                 objRequest.onsuccess = function(e){
                     resolve();
-                    console.log('Success in updating record');
+                    //console.log('Success in updating record');
                 };
             };
             request.onerror = e => {
@@ -177,6 +177,27 @@ class NomeDAO extends DAO {
                     reject();
                 } else {
                     resolve(nomes);
+                }
+            };
+        });
+    }
+
+    recuperaPorId(id) {
+        return new Promise((resolve,reject) => {
+            let cursor = this.store.openCursor();
+
+            let log = null;
+            cursor.onsuccess = e => {
+                let atual = e.target.result;
+                if (atual) {
+                    if ( atual.value._id == id ) {
+                        log = { key: atual.key, value: NomeDAO.instance(atual.value) };
+                    }
+                    atual.continue();
+                } else if (log !== null) {
+                    resolve(log);
+                } else {
+                    reject();
                 }
             };
         });

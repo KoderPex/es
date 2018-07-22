@@ -8,8 +8,12 @@ class BaseService {
         return ConnectionFactory.getConnection();
     }
 
-    importarAlunos() {
+    importarAlunos(listaAtual) {
         return this.obterNomes()
+            .then(nomes =>
+                nomes.filter(nome =>
+                    !listaAtual.some(nomeExistente =>
+                        nomes.isEquals(nomeExistente))))
             .then(nomes => this.insertNomes(nomes) )
             .catch( error => console.log(error) );
     }

@@ -108,6 +108,12 @@ class NomesService {
             .then(dao => dao.recupera(whoAmIId));
     }
 
+    aceitarTransferencia(id) {
+        return this.daoFactory
+            .then(dao => dao.recuperaPorId(id)
+                .then(res => dao.atualiza(res.key, 'ns', false)))
+    }
+
 }
 
 class WhoAmIService {

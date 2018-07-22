@@ -55,27 +55,6 @@ class ListaMembros {
     }
 }
 
-class ListaNomes {
-
-    constructor() {
-        this._nomes = [];
-    }
-
-    adiciona(nome) {
-        this._nomes.push(nome);
-        return this;
-    }
-
-    get nomes() {
-        return [].concat(this._nomes);
-    }
-
-    esvazia() {
-        this._nomes = [];
-        return this;
-    }
-}
-
 class Log extends Nome {
 
     constructor(id,ic,nm,ns,pr,es) {
@@ -108,8 +87,6 @@ class ListaLogs {
     get logs() {
         return [].concat(this._logs);
     }
-
-    refresh() {}
 
     esvazia() {
         this._logs = [];
