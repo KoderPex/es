@@ -2,7 +2,7 @@ class SyncController {
 
     constructor() {
         window._need = null;
-        this._timeInterval = 0.17;
+        this._timeInterval = 1;
         this._pend = 0;
     }
 
