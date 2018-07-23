@@ -15,7 +15,7 @@ elseif ($method == "POST"):
     
     foreach($param as $k => $ap):
         CONN::get()->Execute("
-            UPDATE PESSOA(
+            UPDATE PESSOA SET
                 ID_CLASSE = ?,
                 NS = ?
             WHERE ID = ?

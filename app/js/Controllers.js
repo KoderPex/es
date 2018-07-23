@@ -36,6 +36,14 @@ class SyncController {
                 new ApontamentosService()
                     .listaSync()
                     .then(() => ++this._pend)
+                    .catch(() => this.pend),
+                new LogsService()
+                    .lista()
+                    .then(() => ++this._pend)
+                    .catch(() => this.pend),
+                new TransfsService()
+                    .lista()
+                    .then(() => ++this._pend)
                     .catch(() => this.pend)
             ])
             .then(() => {
@@ -70,9 +78,13 @@ class SyncController {
                 .then(() => {
                     new ApontamentosService().truncate();
                     new LogsService().truncate();
+                    new TransfsService().truncate();
                     resolve();
                 })
-                .catch( () => reject() )
+                .catch(() => {
+                    console.log('reject send transf')
+                    reject()
+                })
             });
     }
 
@@ -102,10 +114,10 @@ class ApontamentosController {
     _init() {
         window.syncController
             .verifica()
-            .then( () => {
+            .then(() => {
                 this._screenRules();
             })
-            .catch( () => {
+            .catch(() => {
                 console.log('Rejeitou...')
                 this._screenRules();
             });
@@ -219,12 +231,12 @@ class ApontamentosController {
                             .recupera( apontID )
                             .then(apontamento => {
                                 new LogsService().contaPrEs(window.whoAmI.id)
-                                    .then( log => {
+                                    .then(log => {
                                         apontamento.value.es = log.es;
                                         apontamento.value.pr = log.pr;
                                         apontamento.value.fg = "1";
                                         service.updateObj(apontamento)
-                                            .then( () => {
+                                            .then(() => {
                                                 window.apontamentosController._init();
                                                 dialogRef.close();
                                             });
@@ -379,6 +391,7 @@ class MaestroController {
             })
             .then(() => {
                 if (window.membrosController) window.membrosController._init();
+                if (window.apontamentosController) window.apontamentosController._init();
             });
             return;
         }
@@ -435,6 +448,7 @@ class MaestroController {
                         })
                         .then(() => {
                             if (window.membrosController) window.membrosController._init();
+                            if (window.apontamentosController) window.apontamentosController._init();
                             dialogRef.close();
                         });
                     }

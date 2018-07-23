@@ -118,8 +118,19 @@ class BaseService {
             .lista()
             .catch(() => resolve())
             .then(logs => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/logs/', logs)
-                    .then(() => sendLogs())
-                    .catch(() => reject())
+                .then(() => resolve())
+                .catch(() => reject())
+            )
+        ); 
+    };
+
+    sendTransfs(){
+        return new Promise((resolve, reject) => new TransfsService()
+            .lista()
+            .catch(() => resolve())
+            .then(transfs => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/transfs/', transfs)
+                .then(() => resolve())
+                .catch(() => reject())
             )
         ); 
     };
@@ -128,16 +139,18 @@ class BaseService {
         return new Promise((resolve, reject) => new ApontamentosService()
             .listaSync()
             .catch(() => resolve())
-            .then(apontamentos => 
-                this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos )
-                    .then(() => resolve())
-                    .catch(() => reject())
+            .then(apontamentos => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/apontamentos/', apontamentos)
+                .then(() => resolve())
+                .catch(() => reject())
             )
         );
     }
 
     sendTransferencias(){
-        return this.sendApontamentos();
+        return this.sendApontamentos()
+            .then(() => this.sendLogs())
+            .then(() => this.sendTransfs())
+        ;
     }
 
 }
