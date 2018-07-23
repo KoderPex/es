@@ -338,7 +338,6 @@ class MaestroController {
         return instance._membrosService
             .lista(whoAmI.id)
             .then(membros => {
-                console.log('passou');
                 const fieldSorter = (fields) => (a, b) => fields.map(o => {
                     let dir = 1;
                     if (o[0] === '-') { dir = -1; o=o.substring(1); }

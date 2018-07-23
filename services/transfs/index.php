@@ -15,13 +15,11 @@ elseif ($method == "POST"):
     
     foreach($param as $k => $ap):
         CONN::get()->Execute("
-            INSERT LOG_CLASSE_PESSOA(
-                ID_LOG_CLASSE,
-                ID_PESSOA,
-                PR,
-                ES
-            ) VALUES (?,?,?,?)
-        ", array($ap["_il"], $ap["_id"], $ap["_pr"], $ap["_es"]));
+            UPDATE PESSOA(
+                ID_CLASSE = ?,
+                NS = ?
+            WHERE ID = ?
+        ", array($ap["_cd"], $ap["_cd"] !== $ap["_co"], $ap["_id"]));
     endforeach;
     
     $arr["result"] = true;
