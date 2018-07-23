@@ -36,10 +36,6 @@ class SyncController {
                 new ApontamentosService()
                     .listaSync()
                     .then(() => ++this._pend)
-                    .catch(() => this.pend),
-                new LogsService()
-                    .lista()
-                    .then(() => ++this._pend)
                     .catch(() => this.pend)
             ])
             .then(() => {
@@ -175,33 +171,22 @@ class ApontamentosController {
         }
     }
 
-    updateTransf(obj) {
-        let service = new LogsService();
-        return service.recupera( obj.id, window.whoAmI.id )
-            .then(log => service.updateLog(log.key, 'ns', false))
-            .catch(() => service.cadastra(
-                new Log(
-                    null,
-                    window.whoAmI.id,
-                    obj.id,
-                    obj.nm,
-                    false,
-                    false )
-            ));
+    updateTransf(id,icFrom,icTo) {
+        return new TransfsService().cadastra(new Transf(id,icFrom,icTo));
     }
 
     updateApontamento(obj) {
         let service = new LogsService();
-        service.recupera(obj.attr('membro'), window.whoAmI.id)
-            .then(log => service.updateLog(log.key, obj.attr('what'), obj.prop('checked') ))
+        service.recupera(obj.il, obj.card.attr('membro'), window.whoAmI.id)
+            .then(log => service.updateLog(log.key, obj.card.attr('what'), obj.card.prop('checked') ))
             .catch(() => service.cadastra(
                 new Log(
-                    null,
+                    obj.il,
                     window.whoAmI.id,
-                    obj.attr('membro'),
-                    obj.parent().parent().parent().parent().find('h4').text(),
-                    obj.attr('what') == 'pr' ? obj.prop('checked') : false,
-                    obj.attr('what') == 'es' ? obj.prop('checked') : false )
+                    obj.card.attr('membro'),
+                    obj.card.parent().parent().parent().parent().find('h4').text(),
+                    obj.card.attr('what') == 'pr' ? obj.card.prop('checked') : false,
+                    obj.card.attr('what') == 'es' ? obj.card.prop('checked') : false )
             ));
     }
 
@@ -255,40 +240,40 @@ class ApontamentosController {
 
 class MembrosController {
 
-    constructor() {
+    constructor(il) {
         this._listaLogs = new Bind(
             new ListaLogs(),
             new ApontamentosMembrosListView($('#apontamentosMembrosView')),
             'adiciona'
         );
-
-        this._service = new MembrosService();
+        this._il = il;
+        this._membrosService = new MembrosService();
         this._logsService = new LogsService();
 
         this._init();
     }
 
+    get il() {
+        return this._il;
+    }
+
     _init() {
+        this._listaLogs.esvazia();
         let instance = this;
-        instance._service
+        instance._membrosService
             .lista(window.whoAmI.id)
             .then(membros => instance.atualizaListaLocal(membros))
             .catch(error => console.log(error));
     }
 
-    _atualizaSpanPlus() {
-        const names = window.maestroController._listaMembros.membros.filter((e,i,a) => e._ns === true);
-        $("#spanPlus").text(`${names.length}`).visible(names.length>0);
-    }
-
     atualizaListaLocal(membros) {
         let instance = this;
         membros.filter((e,i,a) => e._ns !== true).forEach(n => {
-            instance._logsService.recupera(n.id, window.whoAmI.id)
+            instance._logsService.recupera(instance.il,n.id,window.whoAmI.id)
                 .then(log => instance._listaLogs.adiciona(log.value))
                 .catch(() => instance._listaLogs.adiciona(
                     new Log(
-                        null,
+                        instance.il,
                         n.ic,
                         n.id,
                         n.nm,
@@ -298,74 +283,6 @@ class MembrosController {
                 )
         });
     }
-
-    transfereMembro(obj) {
-        if (obj.ns){
-            // window.apontamentosController.updateTransf(obj)
-            // .then(() => this._service.aceitarTransferencia(obj.id))
-            // .then(() => {
-            //     window.maestroController._listaMembros.esvazia();
-            //     return window.maestroController.recuperaMembros(window.whoAmI)
-            // })
-            // .then(() => {
-            //     window.membrosController = new MembrosController();
-            // });
-            return;
-        }
-        BootstrapDialog.show({
-            title: 'ALERTA',
-            message: dialogRef => {
-                var $message = $(`<p>Confirma transferência de <b>${obj.nm}</b> para a sala abaixo indicada?</p>`);
-                var $select = 
-                $(`<select id="cmbClassID" class="form-control show-tick" data-live-search="true" data-show-subtext="true" tabindex="-98">
-                    <option></option>
-                    ${new View().comboClasses()}
-                </select>`);
-                $message.append($select);
-                return $message;
-            },
-            onshown: () => $("#cmbClassID").selectpicker(),
-            type: BootstrapDialog.TYPE_DANGER,
-            size: BootstrapDialog.SIZE_NORMAL,
-            draggable: true,
-            closable: true,
-            closeByBackdrop: false,
-            closeByKeyboard: false,
-            buttons: [
-                { label: 'N&atilde;o',
-                    cssClass: 'btn-success',
-                    action: function( dialogRef ){
-                        dialogRef.close();
-                    }
-                },
-                { label: 'Sim, desejo confirmar!',
-                    cssClass: 'btn-danger',
-                    autospin: true,
-                    action: function(dialogRef){
-                        dialogRef.enableButtons(false);
-                        dialogRef.setClosable(false);
-                        let service = new ApontamentosService();
-
-                        service
-                            .recupera( apontID )
-                            .then(apontamento => {
-                                new LogsService().contaPrEs(window.whoAmI.id)
-                                    .then( log => {
-                                        apontamento.value.es = log.es;
-                                        apontamento.value.pr = log.pr;
-                                        apontamento.value.fg = "1";
-                                        service.updateObj(apontamento)
-                                            .then( () => {
-                                                window.apontamentosController._init();
-                                                dialogRef.close();
-                                            });
-                                    });
-                            });
-                    }
-                }
-            ]
-        });
-    };
 
 }
 
@@ -397,6 +314,11 @@ class MaestroController {
         .then(() => this.recuperaClasses());
     }
 
+    _atualizaSpanPlus() {
+        const names = this._listaMembros.membros.filter((e,i,a) => e._ns === true);
+        $("#spanPlus").text(`${names.length}`).visible(names.length>0);
+    }
+
     classes() {
         return this._listaClasses.classes;
     }
@@ -416,13 +338,14 @@ class MaestroController {
         return instance._membrosService
             .lista(whoAmI.id)
             .then(membros => {
+                console.log('passou');
                 const fieldSorter = (fields) => (a, b) => fields.map(o => {
                     let dir = 1;
                     if (o[0] === '-') { dir = -1; o=o.substring(1); }
                     return a[o] > b[o] ? dir : a[o] < b[o] ? -(dir) : 0;
                 }).reduce((p, n) => p ? p : n, 0);
-                membros.sort(fieldSorter(['-ns','nm'])).forEach(n => instance._listaMembros.adiciona( n ));
-                window.membrosController._atualizaSpanPlus();
+                membros.sort(fieldSorter(['-ns','nm'])).forEach(n => instance._listaMembros.adiciona(n));
+                instance._atualizaSpanPlus();
             });
     }
 
@@ -445,6 +368,81 @@ class MaestroController {
                     });
             });
     }
+
+    transfereMembro(obj) {
+        let instance = this;
+        if (obj.ns){
+            window.apontamentosController.updateTransf(obj.id,window.whoAmI.id,window.whoAmI.id)
+            .then(() => instance._membrosService.aceitarTransferencia(obj.id))
+            .then(() => {
+                instance._listaMembros.esvazia();
+                return instance.recuperaMembros(window.whoAmI)
+            })
+            .then(() => {
+                if (window.membrosController) window.membrosController._init();
+            });
+            return;
+        }
+        BootstrapDialog.show({
+            title: 'ALERTA',
+            message: dialogRef => {
+                const btnConf = dialogRef.getButton('btnDlgConfTransf');
+                var $message = $(`<div>Confirma transferência de <b>${obj.nm}</b> para a sala abaixo indicada?</div><br/>
+                <select id="cmbClassID" class="form-control show-tick" data-live-search="true" data-show-subtext="true" tabindex="-98">
+                    <option></option>
+                    ${new View().comboClasses()}
+                </select>`);
+                btnConf.disable();
+                return $message;
+            },
+            onshown: dialogRef => {
+                const btnConf = dialogRef.getButton('btnDlgConfTransf');
+                $("#cmbClassID")
+                    .selectpicker()
+                    .change(function(event){
+                        if ($(this).val() !== ''){
+                            btnConf.enable();
+                        } else {
+                            btnConf.disable();
+                        }
+                    });
+            },
+            type: BootstrapDialog.TYPE_DANGER,
+            size: BootstrapDialog.SIZE_NORMAL,
+            draggable: true,
+            closable: true,
+            closeByBackdrop: false,
+            closeByKeyboard: false,
+            buttons: [
+                { label: 'N&atilde;o',
+                    cssClass: 'btn-success',
+                    action: function( dialogRef ){
+                        dialogRef.close();
+                    }
+                },
+                { label: 'Sim, desejo confirmar!',
+                    cssClass: 'btn-danger',
+                    id: 'btnDlgConfTransf',
+                    autospin: true,
+                    action: function(dialogRef) {
+                        dialogRef.enableButtons(false);
+                        dialogRef.setClosable(false);
+
+                        window.apontamentosController.updateTransf(obj.id,window.whoAmI.id,$("#cmbClassID").val()*1)
+                        .then(() => instance._membrosService.transferir(obj.id, $("#cmbClassID").val()*1))
+                        .then(() => {
+                            instance._listaMembros.esvazia();
+                            return instance.recuperaMembros(window.whoAmI)
+                        })
+                        .then(() => {
+                            if (window.membrosController) window.membrosController._init();
+                            dialogRef.close();
+                        });
+                    }
+                }
+            ]
+        });
+    };
 
     iniciaInformacoesdaClasse(){
         $("#divHeaderClasse, #divTabs").hide();
@@ -477,8 +475,6 @@ class MaestroController {
             new HeaderClassView( $('#divHeaderClasse')),
             'adiciona'
         );
-
-        window.membrosController = new MembrosController();
 
         this.populaInformacoesdaClasse();
     }

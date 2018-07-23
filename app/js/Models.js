@@ -54,6 +54,49 @@ class ListaMembros {
     }
 }
 
+class Transf {
+
+    constructor(id,co,cd) {
+        this._id = id;
+        this._co = co;
+        this._cd = cd;
+        Object.freeze(this); //isFrozen()
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get co() {
+        return this._co;
+    }
+
+    get cd() {
+        return this._cd;
+    }
+
+}
+
+class ListaTransfs {
+    constructor() {
+        this._transfs = [];
+    }
+
+    adiciona(transf) {
+        this._transfs.push(transf);
+        return this;
+    }
+
+    get logs() {
+        return [].concat(this._transfs);
+    }
+
+    esvazia() {
+        this._transfs = [];
+        return this;
+    }
+}
+
 class Log {
 
     constructor(il,ic,id,nm,pr,es) {

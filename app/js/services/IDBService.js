@@ -113,6 +113,12 @@ class MembrosService {
                 .then(res => dao.atualiza(res.key, 'ns', false)))
     }
 
+    transferir(id,ic) {
+        return this.daoFactory
+            .then(dao => dao.recuperaPorId(id)
+                .then(res => dao.atualiza(res.key, 'ic', ic)))
+    }
+
 }
 
 class WhoAmIService {
@@ -186,14 +192,14 @@ class LogsService {
            });
     }
 
-    recupera(id,ic) {
+    recupera(il,id,ic) {
         return this.daoFactory
-            .then(dao => dao.recupera(id,ic));
+            .then(dao => dao.recupera(il,id,ic));
     }
 
-    contaPrEs(ic) {
+    contaPrEs(il,ic) {
         return this.daoFactory
-            .then(dao => dao.contaPrEs(ic));
+            .then(dao => dao.contaPrEs(il,ic));
     }
 
     lista() {

@@ -26,13 +26,13 @@ class View {
         $('select:not(.ms)').selectpicker();
         $('.bootstrap-select>.btn-default').removeClass('btn-default');
         $('.panel.panel-danger').unbind('show.bs.collapse').on('show.bs.collapse', function (e) {
-            window.membrosController = new MembrosController();
+            window.membrosController = new MembrosController( $(this).find("#apontamentosMembrosView").attr("log-id") );
         });
         $("[membro-transf]").unbind('click').on('click', function(e){
-            window.membrosController.transfereMembro( { ...JSON.parse($(this).attr('membro-transf')), nm: $(this).parent().find("label").text() } );
+            window.maestroController.transfereMembro({ ...JSON.parse($(this).attr('membro-transf')), nm: $(this).parent().find("label").text() });
         });
         $('.switch>label>input').unbind('change').on('change', function (e) {
-            window.apontamentosController.updateApontamento( $(this) );
+            window.apontamentosController.updateApontamento({ il: $(this).parents().closest("#apontamentosMembrosView").attr("log-id"), card: $(this) });
         });
         $('.money-real').inputmask({alias:'real'});
         $(".spinner").spinner('changing', function(e, newVal, oldVal) {

@@ -113,6 +113,17 @@ class BaseService {
             });
     }
 
+    sendLogs(){
+        return new Promise((resolve, reject) => new LogsService()
+            .lista()
+            .catch(() => resolve())
+            .then(logs => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/logs/', logs)
+                    .then(() => sendLogs())
+                    .catch(() => reject())
+            )
+        ); 
+    };
+
     sendApontamentos(){
         return new Promise((resolve, reject) => new ApontamentosService()
             .listaSync()
@@ -125,20 +136,8 @@ class BaseService {
         );
     }
 
-    sendLogs(){
-        return new Promise((resolve, reject) => new LogsService()
-            .lista()
-            .catch(() => resolve())
-            .then(logs => this._http.post('https://iasd-capaoredondo.com.br/escolasabatina/services/logs/', logs)
-                    .then(() => resolve())
-                    .catch(() => reject())
-            )
-        ); 
-    };
-
     sendTransferencias(){
-        return this.sendApontamentos()
-            .then(() => this.sendLogs());
+        return this.sendApontamentos();
     }
 
 }
